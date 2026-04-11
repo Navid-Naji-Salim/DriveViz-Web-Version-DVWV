@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TOYOTA | Car Visualizer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="toyota-css.css"/>
 </head>
 <body>
 
@@ -25,8 +25,6 @@
 </nav>
 
 <div class="layout">
-
-  <!-- LEFT PANEL -->
   <aside class="panel">
     <div class="panel-tabs">
       <button class="p-tab active" data-tab="model">Model</button>
@@ -36,8 +34,6 @@
     </div>
 
     <div class="panel-body">
-
-      <!-- MODEL TAB -->
       <div class="tab-content active" id="tab-model">
         <p class="sec-label">Choose Your Model</p>
         <div class="model-cards">
@@ -82,7 +78,6 @@
         </div>
       </div>
 
-      <!-- EXTERIOR TAB -->
       <div class="tab-content" id="tab-exterior">
         <p class="sec-label">Exterior Color</p>
         <div class="color-row">
@@ -121,7 +116,6 @@
         </div>
       </div>
 
-      <!-- INTERIOR TAB -->
       <div class="tab-content" id="tab-interior">
         <p class="sec-label">Interior Trim</p>
         <div class="int-row">
@@ -136,7 +130,7 @@
           <div class="int-item" data-int="Macadamia / Ash">
             <div class="int-swatch" style="background:linear-gradient(135deg,#c8c6c5 50%,#9e9a96 50%)"></div>
             <div class="int-info">
-              <div class="int-name">SofTex®-trimmed</div>
+              <div class="int-name">SofTex-trimmed</div>
               <div class="int-sub">Macadamia / Ash</div>
             </div>
           </div>
@@ -150,13 +144,12 @@
         </div>
       </div>
 
-      <!-- SPECS TAB -->
       <div class="tab-content" id="tab-specs">
         <p class="sec-label">Performance</p>
         <div class="spec-row">
           <div class="spec-box"><p class="spec-lbl">Power</p><p class="spec-val" id="sp-power">340 HP</p></div>
           <div class="spec-box"><p class="spec-lbl">Torque</p><p class="spec-val" id="sp-torque">400 lb-ft</p></div>
-          <div class="spec-box"><p class="spec-lbl">0–60 mph</p><p class="spec-val" id="sp-accel">5.7s</p></div>
+          <div class="spec-box"><p class="spec-lbl">0-60 mph</p><p class="spec-val" id="sp-accel">5.7s</p></div>
           <div class="spec-box"><p class="spec-lbl">Drive</p><p class="spec-val" id="sp-drive">AWD</p></div>
         </div>
         <p class="sec-label">Efficiency</p>
@@ -172,8 +165,7 @@
           <div class="spec-box"><p class="spec-lbl">Wheelbase</p><p class="spec-val" id="sp-wb">112 in</p></div>
         </div>
       </div>
-
-    </div><!-- /panel-body -->
+    </div>
 
     <div class="panel-foot">
       <div class="total-row">
@@ -185,7 +177,6 @@
     </div>
   </aside>
 
-  <!-- CANVAS -->
   <div class="canvas-wrap">
     <div class="env-glow" id="envGlow"></div>
 
@@ -200,16 +191,16 @@
     <div class="canvas-color-tag" id="colorTag">Heavy Metal / Black</div>
 
     <div id="carCanvas">
-      <!-- ═══════════════════════════════════════
-           CAR CANVAS — drop your car here
-           • <img src="car.png"/>
-           • Three.js / WebGL <canvas>
-           • 360° viewer embed
-      ════════════════════════════════════════ -->
+      <!--
+           CAR CANVAS - drop your car here
+           - <img src="car.png"/>
+           - Three.js / WebGL <canvas>
+           - 360-degree viewer embed
+      -->
       <div class="canvas-placeholder">
         <span class="ms">directions_car</span>
         <p class="canvas-ph-title">Car Canvas</p>
-        <p class="canvas-ph-sub">Drop your vehicle render, 360° viewer, or WebGL scene here</p>
+        <p class="canvas-ph-sub">Drop your vehicle render, 360-degree viewer, or WebGL scene here</p>
       </div>
     </div>
 
@@ -225,9 +216,8 @@
       <button class="view-btn ms" title="Screenshot">photo_camera</button>
     </div>
   </div>
+</div>
 
-</div><!-- /layout -->
-
-<script src="app.js"></script>
+<script src="toyota-js.js"></script>
 </body>
 </html>
