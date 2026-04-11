@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TOYOTA | Car Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#bd0014;--red2:#eb0a1e;
+  --bg:#111213;--bg2:#1a1b1c;--bg3:#222426;--bg4:#2a2c2e;
+  --border:rgba(255,255,255,.07);
+  --text:#f0f0f0;--muted:#888;--muted2:#555;
+  --font:'Inter',system-ui,sans-serif;
+  --nav:64px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow:hidden}
+button{cursor:pointer;border:none;background:none;font-family:var(--font);color:inherit}
+.ms{font-family:'Material Symbols Outlined';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;
+  display:inline-block;white-space:nowrap;word-wrap:normal;user-select:none}
+.ms.fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;width:100%;height:var(--nav);z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;
+  background:rgba(17,18,19,.7);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:1.1rem;font-weight:900;letter-spacing:.18em;color:#fff}
+.nav-links{display:flex;gap:2rem}
+.nav-link{font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);transition:color .2s;padding-bottom:2px}
+.nav-link:hover{color:#fff}
+.nav-link.active{color:var(--red);border-bottom:1.5px solid var(--red)}
+.nav-right{display:flex;align-items:center;gap:1.2rem}
+.nav-icon{font-size:1.2rem;color:var(--muted);transition:color .2s}
+.nav-icon:hover{color:#fff}
+.nav-cta{
+  font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  padding:.5rem 1.2rem;border-radius:2px;
+  background:var(--red);color:#fff;transition:opacity .2s
+}
+.nav-cta:hover{opacity:.85}
+
+/* LAYOUT */
+.layout{
+  display:flex;height:100vh;padding-top:var(--nav);
+}
+
+/* ── LEFT PANEL ── */
+.panel{
+  width:340px;flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.panel-tabs{
+  display:flex;border-bottom:1px solid var(--border);
+}
+.p-tab{
+  flex:1;padding:.85rem;font-size:.58rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+  border-bottom:2px solid transparent;transition:all .2s;
+}
+.p-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.panel-body{flex:1;overflow-y:auto;padding:1.5rem;
+  scrollbar-width:thin;scrollbar-color:var(--bg4) transparent}
+
+/* Model selector */
+.model-cards{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
+.model-card{
+  display:flex;align-items:center;gap:1rem;
+  padding:.85rem 1rem;border-radius:3px;
+  border:1px solid var(--border);
+  background:var(--bg3);cursor:pointer;transition:all .2s;
+}
+.model-card:hover{border-color:rgba(255,255,255,.15);background:var(--bg4)}
+.model-card.active{border-color:var(--red);background:rgba(189,0,20,.08)}
+.model-badge{
+  font-size:.5rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  padding:.2rem .5rem;border-radius:1px;background:var(--red);color:#fff;
+}
+.model-card-info{flex:1}
+.model-card-name{font-size:.78rem;font-weight:800;letter-spacing:-.01em}
+.model-card-sub{font-size:.58rem;color:var(--muted);margin-top:.15rem}
+.model-card-price{font-size:.72rem;font-weight:700;color:var(--red)}
+
+/* Section labels */
+.sec-label{
+  font-size:.55rem;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;margin-top:1.5rem
+}
+.sec-label:first-child{margin-top:0}
+
+/* Color swatches */
+.color-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem}
+.swatch{
+  width:2rem;height:2rem;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:transform .15s,border-color .2s;
+  position:relative;
+}
+.swatch:hover{transform:scale(1.15)}
+.swatch.active{border-color:#fff;box-shadow:0 0 0 2px var(--red)}
+.color-name{font-size:.6rem;color:var(--muted);margin-bottom:1rem}
+
+/* Wheel pills */
+.wheel-row{display:flex;flex-direction:column;gap:.5rem}
+.wheel-pill{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.7rem .9rem;border-radius:3px;
+  border:1px solid var(--border);background:var(--bg3);
+  cursor:pointer;transition:all .2s;
+}
+.wheel-pill:hover{border-color:rgba(255,255,255,.15)}
+.wheel-pill.active{border-color:var(--red);background:rgba(189,0,20,.08)}
+.wheel-dot{width:.5rem;height:.5rem;border-radius:50%;border:1.5px solid var(--muted);flex-shrink:0}
+.wheel-pill.active .wheel-dot{background:var(--red);border-color:var(--red)}
+.wheel-pill-name{font-size:.68rem;font-weight:600}
+.wheel-pill-sub{font-size:.55rem;color:var(--muted)}
+
+/* Interior */
+.int-row{display:flex;flex-direction:column;gap:.5rem}
+.int-item{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.7rem .9rem;border-radius:3px;
+  border:1px solid var(--border);background:var(--bg3);
+  cursor:pointer;transition:all .2s;
+}
+.int-item:hover{border-color:rgba(255,255,255,.15)}
+.int-item.active{border-color:var(--red);background:rgba(189,0,20,.08)}
+.int-swatch{width:2rem;height:2rem;border-radius:2px;flex-shrink:0}
+.int-info{flex:1}
+.int-name{font-size:.68rem;font-weight:600}
+.int-sub{font-size:.55rem;color:var(--muted)}
+.int-check{font-size:1rem;color:var(--red)}
+
+/* Specs bar */
+.spec-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
+.spec-box{
+  padding:.75rem;border-radius:3px;
+  background:var(--bg3);border:1px solid var(--border);
+}
+.spec-lbl{font-size:.52rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.spec-val{font-size:.88rem;font-weight:800;font-style:italic}
+
+/* Panel footer */
+.panel-foot{
+  padding:1.2rem 1.5rem;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:.5rem;
+}
+.total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem}
+.total-lbl{font-size:.58rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.total-val{font-size:1.4rem;font-weight:900;color:var(--red)}
+.btn-red{
+  width:100%;padding:.85rem;border-radius:2px;
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  box-shadow:0 6px 20px rgba(189,0,20,.3);transition:opacity .2s,transform .15s;
+}
+.btn-red:hover{opacity:.9}
+.btn-red:active{transform:scale(.98)}
+.btn-ghost{
+  width:100%;padding:.85rem;border-radius:2px;
+  border:1px solid var(--border);
+  color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  transition:border-color .2s,color .2s;
+}
+.btn-ghost:hover{border-color:rgba(255,255,255,.2);color:#fff}
+
+/* ── CANVAS AREA ── */
+.canvas-wrap{
+  flex:1;position:relative;
+  display:flex;flex-direction:column;
+  background:var(--bg);overflow:hidden;
+}
+
+/* Environment ambience */
+.env-glow{
+  position:absolute;inset:0;pointer-events:none;
+  transition:background 1s ease;
+}
+
+/* Step bar */
+.step-bar{
+  position:absolute;top:1.5rem;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:.75rem;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(12px);
+  border:1px solid var(--border);border-radius:999px;
+  padding:.5rem 1.2rem;z-index:10;
+}
+.step{font-size:.55rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted2)}
+.step.active{color:#fff}
+.step-sep{width:1.5rem;height:1px;background:var(--border)}
+
+/* Watermark */
+.watermark{
+  position:absolute;bottom:10%;left:50%;transform:translateX(-50%);
+  font-size:13vw;font-weight:900;letter-spacing:-.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.025);pointer-events:none;user-select:none;white-space:nowrap;
+  transition:opacity .5s;
+}
+
+/* Canvas box */
+#carCanvas{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  z-index:5;
+}
+.canvas-placeholder{
+  display:flex;flex-direction:column;align-items:center;gap:.8rem;
+  opacity:.18;pointer-events:none;user-select:none;
+}
+.canvas-placeholder .ms{font-size:5rem;color:#fff}
+.canvas-ph-title{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.canvas-ph-sub{font-size:.58rem;color:var(--muted);text-align:center;max-width:260px;line-height:1.7}
+
+/* Ground reflection */
+.ground{
+  position:absolute;bottom:0;left:0;right:0;height:35%;
+  background:linear-gradient(to top,rgba(0,0,0,.6),transparent);
+  pointer-events:none;z-index:4;
+}
+.ground-line{
+  position:absolute;bottom:34%;left:10%;right:10%;
+  height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.06),transparent);
+}
+
+/* View controls */
+.view-controls{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.3rem;
+  background:rgba(255,255,255,.05);backdrop-filter:blur(16px);
+  border:1px solid var(--border);border-radius:999px;padding:.4rem;z-index:20;
+}
+.view-btn{
+  width:2.4rem;height:2.4rem;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;color:var(--muted);transition:all .2s;
+}
+.view-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.view-btn.active{background:rgba(189,0,20,.9);color:#fff}
+
+/* Color tag overlay */
+.canvas-color-tag{
+  position:absolute;top:1.5rem;right:1.5rem;
+  font-size:.55rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:.4rem .9rem;border-radius:999px;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(10px);
+  border:1px solid var(--border);color:var(--muted);z-index:10;
+  transition:all .4s;
+}
+
+/* Config changed flash */
+@keyframes flash{0%{opacity:.5}100%{opacity:1}}
+.flash{animation:flash .3s ease}
+
+/* Tabs content */
+.tab-content{display:none}
+.tab-content.active{display:block}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">TOYOTA</div>
+  <div class="nav-links">
+    <a class="nav-link active" href="#">Models</a>
+    <a class="nav-link" href="#">Build &amp; Price</a>
+    <a class="nav-link" href="#">Inventory</a>
+    <a class="nav-link" href="#">Find a Dealer</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon ms">search</button>
+    <button class="nav-icon ms">favorite_border</button>
+    <button class="nav-cta">Get a Quote</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- LEFT PANEL -->
+  <aside class="panel">
+    <div class="panel-tabs">
+      <button class="p-tab active" data-tab="model">Model</button>
+      <button class="p-tab" data-tab="exterior">Exterior</button>
+      <button class="p-tab" data-tab="interior">Interior</button>
+      <button class="p-tab" data-tab="specs">Specs</button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- MODEL TAB -->
+      <div class="tab-content active" id="tab-model">
+        <p class="sec-label">Choose Your Model</p>
+        <div class="model-cards">
+          <div class="model-card active" data-model="crown" data-price="54450" data-name="Crown Platinum" data-sub="2.4L Hybrid MAX AWD">
+            <div>
+              <div class="model-card-name">Crown</div>
+              <div class="model-card-sub">Platinum · Hybrid MAX AWD</div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div class="model-badge">NEW</div>
+              <div class="model-card-price" style="margin-top:.4rem">$54,450</div>
+            </div>
+          </div>
+          <div class="model-card" data-model="camry" data-price="29950" data-name="Camry XSE" data-sub="2.5L 4-Cylinder">
+            <div>
+              <div class="model-card-name">Camry</div>
+              <div class="model-card-sub">XSE · 2.5L 4-Cylinder</div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div class="model-card-price">$29,950</div>
+            </div>
+          </div>
+          <div class="model-card" data-model="supra" data-price="56545" data-name="GR Supra 3.0" data-sub="3.0L Turbocharged">
+            <div>
+              <div class="model-card-name">GR Supra</div>
+              <div class="model-card-sub">3.0 · Turbocharged</div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div class="model-badge" style="background:#222">GR</div>
+              <div class="model-card-price" style="margin-top:.4rem">$56,545</div>
+            </div>
+          </div>
+          <div class="model-card" data-model="rav4" data-price="31025" data-name="RAV4 XSE" data-sub="2.5L Hybrid AWD">
+            <div>
+              <div class="model-card-name">RAV4</div>
+              <div class="model-card-sub">XSE Hybrid · AWD</div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div class="model-card-price">$31,025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTERIOR TAB -->
+      <div class="tab-content" id="tab-exterior">
+        <p class="sec-label">Exterior Color</p>
+        <div class="color-row">
+          <button class="swatch active" data-color="Heavy Metal / Black" style="background:#1a1c1c" title="Heavy Metal"></button>
+          <button class="swatch" data-color="Wind Chill Pearl" style="background:#f0eeec;border-color:#444" title="Wind Chill Pearl"></button>
+          <button class="swatch" data-color="Supersonic Red" style="background:#8e0000" title="Supersonic Red"></button>
+          <button class="swatch" data-color="Blueprint" style="background:#1e3a5f" title="Blueprint"></button>
+          <button class="swatch" data-color="Oxide Bronze" style="background:#a38c6d" title="Oxide Bronze"></button>
+          <button class="swatch" data-color="Midnight Black" style="background:#0d0d0d;border-color:#333" title="Midnight Black"></button>
+        </div>
+        <p class="color-name" id="colorName">Heavy Metal / Black</p>
+
+        <p class="sec-label">Wheel Package</p>
+        <div class="wheel-row">
+          <div class="wheel-pill active" data-wheel="21-in. Split-Spoke Alloy">
+            <div class="wheel-dot"></div>
+            <div>
+              <div class="wheel-pill-name">21-in. Split-Spoke Alloy</div>
+              <div class="wheel-pill-sub">Machined finish · Included</div>
+            </div>
+          </div>
+          <div class="wheel-pill" data-wheel="21-in. Matte Black Sport">
+            <div class="wheel-dot"></div>
+            <div>
+              <div class="wheel-pill-name">21-in. Matte Black Sport</div>
+              <div class="wheel-pill-sub">Dark Finish · +$400</div>
+            </div>
+          </div>
+          <div class="wheel-pill" data-wheel="20-in. Five-Spoke Dark Chrome">
+            <div class="wheel-dot"></div>
+            <div>
+              <div class="wheel-pill-name">20-in. Dark Chrome</div>
+              <div class="wheel-pill-sub">Sport Package · +$800</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERIOR TAB -->
+      <div class="tab-content" id="tab-interior">
+        <p class="sec-label">Interior Trim</p>
+        <div class="int-row">
+          <div class="int-item active" data-int="Black / Bronze">
+            <div class="int-swatch" style="background:linear-gradient(135deg,#1a1c1c 50%,#6b5b3a 50%)"></div>
+            <div class="int-info">
+              <div class="int-name">Leather-trimmed</div>
+              <div class="int-sub">Black with Bronze accents</div>
+            </div>
+            <span class="ms fill int-check">check_circle</span>
+          </div>
+          <div class="int-item" data-int="Macadamia / Ash">
+            <div class="int-swatch" style="background:linear-gradient(135deg,#c8c6c5 50%,#9e9a96 50%)"></div>
+            <div class="int-info">
+              <div class="int-name">SofTex®-trimmed</div>
+              <div class="int-sub">Macadamia / Ash</div>
+            </div>
+          </div>
+          <div class="int-item" data-int="Red / Black Sport">
+            <div class="int-swatch" style="background:linear-gradient(135deg,#6b0010 50%,#1a1c1c 50%)"></div>
+            <div class="int-info">
+              <div class="int-name">Sport Leather</div>
+              <div class="int-sub">Red Stitching / Black</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPECS TAB -->
+      <div class="tab-content" id="tab-specs">
+        <p class="sec-label">Performance</p>
+        <div class="spec-row">
+          <div class="spec-box"><p class="spec-lbl">Power</p><p class="spec-val" id="sp-power">340 HP</p></div>
+          <div class="spec-box"><p class="spec-lbl">Torque</p><p class="spec-val" id="sp-torque">400 lb-ft</p></div>
+          <div class="spec-box"><p class="spec-lbl">0–60 mph</p><p class="spec-val" id="sp-accel">5.7s</p></div>
+          <div class="spec-box"><p class="spec-lbl">Drive</p><p class="spec-val" id="sp-drive">AWD</p></div>
+        </div>
+        <p class="sec-label">Efficiency</p>
+        <div class="spec-row">
+          <div class="spec-box"><p class="spec-lbl">City MPG</p><p class="spec-val" id="sp-city">29</p></div>
+          <div class="spec-box"><p class="spec-lbl">Hwy MPG</p><p class="spec-val" id="sp-hwy">32</p></div>
+          <div class="spec-box"><p class="spec-lbl">Combined</p><p class="spec-val" id="sp-comb">30</p></div>
+          <div class="spec-box"><p class="spec-lbl">Fuel</p><p class="spec-val" id="sp-fuel">Hybrid</p></div>
+        </div>
+        <p class="sec-label">Dimensions</p>
+        <div class="spec-row">
+          <div class="spec-box"><p class="spec-lbl">Length</p><p class="spec-val" id="sp-len">196 in</p></div>
+          <div class="spec-box"><p class="spec-lbl">Wheelbase</p><p class="spec-val" id="sp-wb">112 in</p></div>
+        </div>
+      </div>
+
+    </div><!-- /panel-body -->
+
+    <div class="panel-foot">
+      <div class="total-row">
+        <span class="total-lbl">Configured Price</span>
+        <span class="total-val" id="totalPrice">$54,450</span>
+      </div>
+      <button class="btn-red">Request a Quote</button>
+      <button class="btn-ghost">Save Configuration</button>
+    </div>
+  </aside>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrap">
+    <div class="env-glow" id="envGlow"></div>
+
+    <div class="step-bar">
+      <span class="step active">01 Model</span>
+      <span class="step-sep"></span>
+      <span class="step" id="step2">02 Exterior</span>
+      <span class="step-sep"></span>
+      <span class="step" id="step3">03 Interior</span>
+    </div>
+
+    <div class="canvas-color-tag" id="colorTag">Heavy Metal / Black</div>
+
+    <div id="carCanvas">
+      <!-- ═══════════════════════════════════════
+           CAR CANVAS — drop your car here
+           • <img src="car.png"/>
+           • Three.js / WebGL <canvas>
+           • 360° viewer embed
+      ════════════════════════════════════════ -->
+      <div class="canvas-placeholder">
+        <span class="ms">directions_car</span>
+        <p class="canvas-ph-title">Car Canvas</p>
+        <p class="canvas-ph-sub">Drop your vehicle render, 360° viewer, or WebGL scene here</p>
+      </div>
+    </div>
+
+    <div class="ground"></div>
+    <div class="ground-line"></div>
+    <div class="watermark" id="watermark">Crown</div>
+
+    <div class="view-controls">
+      <button class="view-btn active ms" title="360">360</button>
+      <button class="view-btn ms" title="Exterior">directions_car</button>
+      <button class="view-btn ms" title="Interior">airline_seat_recline_normal</button>
+      <button class="view-btn ms" title="Light">light_mode</button>
+      <button class="view-btn ms" title="Screenshot">photo_camera</button>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<script>
+const modelData={
+  crown:{name:"Crown Platinum",sub:"2.4L Hybrid MAX AWD",price:54450,
+    specs:{power:"340 HP",torque:"400 lb-ft",accel:"5.7s",drive:"AWD",city:"29",hwy:"32",comb:"30",fuel:"Hybrid",len:"196 in",wb:"112 in"}},
+  camry:{name:"Camry XSE",sub:"2.5L 4-Cylinder",price:29950,
+    specs:{power:"203 HP",torque:"184 lb-ft",accel:"7.2s",drive:"FWD",city:"28",hwy:"39",comb:"32",fuel:"Gasoline",len:"192 in",wb:"111 in"}},
+  supra:{name:"GR Supra 3.0",sub:"3.0L Turbocharged Inline-6",price:56545,
+    specs:{power:"382 HP",torque:"368 lb-ft",accel:"3.9s",drive:"RWD",city:"22",hwy:"30",comb:"25",fuel:"Premium",len:"172 in",wb:"97 in"}},
+  rav4:{name:"RAV4 XSE",sub:"2.5L Hybrid AWD",price:31025,
+    specs:{power:"219 HP",torque:"163 lb-ft",accel:"7.4s",drive:"AWD",city:"41",hwy:"38",comb:"40",fuel:"Hybrid",len:"180 in",wb:"105 in"}}
+};
+
+const envColors={
+  "#1a1c1c":"radial-gradient(ellipse at 60% 40%, rgba(50,50,60,.25) 0%, transparent 70%)",
+  "#f0eeec":"radial-gradient(ellipse at 60% 40%, rgba(220,215,200,.18) 0%, transparent 70%)",
+  "#8e0000":"radial-gradient(ellipse at 60% 40%, rgba(140,0,0,.22) 0%, transparent 70%)",
+  "#1e3a5f":"radial-gradient(ellipse at 60% 40%, rgba(30,58,95,.25) 0%, transparent 70%)",
+  "#a38c6d":"radial-gradient(ellipse at 60% 40%, rgba(163,140,109,.2) 0%, transparent 70%)",
+  "#0d0d0d":"radial-gradient(ellipse at 60% 40%, rgba(30,30,30,.3) 0%, transparent 70%)"
+};
+
+let basePrice=54450;
+
+// Tabs
+document.querySelectorAll('.p-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.p-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    // update step indicators
+    const steps={exterior:'step2',interior:'step3'};
+    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+    document.querySelector('.step').classList.add('active');
+    if(steps[btn.dataset.tab]) document.getElementById(steps[btn.dataset.tab]).classList.add('active');
+  });
+});
+
+// Models
+document.querySelectorAll('.model-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    document.querySelectorAll('.model-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    const m=modelData[card.dataset.model];
+    basePrice=m.price;
+    document.getElementById('totalPrice').textContent='$'+m.price.toLocaleString();
+    document.getElementById('watermark').textContent=card.querySelector('.model-card-name').textContent;
+    // Update specs
+    const s=m.specs;
+    document.getElementById('sp-power').textContent=s.power;
+    document.getElementById('sp-torque').textContent=s.torque;
+    document.getElementById('sp-accel').textContent=s.accel;
+    document.getElementById('sp-drive').textContent=s.drive;
+    document.getElementById('sp-city').textContent=s.city;
+    document.getElementById('sp-hwy').textContent=s.hwy;
+    document.getElementById('sp-comb').textContent=s.comb;
+    document.getElementById('sp-fuel').textContent=s.fuel;
+    document.getElementById('sp-len').textContent=s.len;
+    document.getElementById('sp-wb').textContent=s.wb;
+    flashCanvas();
+  });
+});
+
+// Colors
+document.querySelectorAll('.swatch').forEach(sw=>{
+  sw.addEventListener('click',()=>{
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+    const name=sw.dataset.color;
+    document.getElementById('colorName').textContent=name;
+    document.getElementById('colorTag').textContent=name;
+    document.getElementById('envGlow').style.background=envColors[sw.style.background]||'';
+    flashCanvas();
+  });
+});
+
+// Wheels
+document.querySelectorAll('.wheel-pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.wheel-pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    flashCanvas();
+  });
+});
+
+// Interior
+document.querySelectorAll('.int-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.int-item').forEach(i=>{
+      i.classList.remove('active');
+      i.querySelector('.int-check')?.remove();
+    });
+    item.classList.add('active');
+    const chk=document.createElement('span');
+    chk.className='ms fill int-check';chk.textContent='check_circle';
+    item.appendChild(chk);
+    flashCanvas();
+  });
+});
+
+// View buttons
+document.querySelectorAll('.view-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+function flashCanvas(){
+  const c=document.getElementById('carCanvas');
+  c.classList.remove('flash');
+  void c.offsetWidth;
+  c.classList.add('flash');
+}
+</script>
+</body>
+</html>
