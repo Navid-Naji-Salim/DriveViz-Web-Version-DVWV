@@ -105,13 +105,14 @@ button {
 .p-tab::after {
   content: "";
   position: absolute;
-  right: 0.3rem;
+  left: 50%;
   bottom: -1px;
-  left: 0.3rem;
+  width: 3.2rem;
   height: 2px;
   background: var(--red);
   transform: scaleX(0);
   transform-origin: center;
+  margin-left: -1.6rem;
   transition: transform 0.24s ease;
 }
 
