@@ -85,13 +85,14 @@ button {
 
 .p-tab {
   flex: 1;
-  padding: 0.8rem 0.18rem;
+  padding: 0.78rem 0.08rem;
   border-bottom: 2px solid transparent;
   color: var(--muted);
-  font-size: 0.5rem;
+  font-size: 0.54rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
+  line-height: 1.1;
   transition: all 0.2s;
 }
 
