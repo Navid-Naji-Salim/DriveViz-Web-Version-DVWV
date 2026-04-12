@@ -11,16 +11,9 @@
 
 <nav>
   <div class="nav-logo">TOYOTA</div>
-  <div class="nav-links">
-    <a class="nav-link active" href="#">Models</a>
-    <a class="nav-link" href="#">Build &amp; Price</a>
-    <a class="nav-link" href="#">Inventory</a>
-    <a class="nav-link" href="#">Find a Dealer</a>
-  </div>
   <div class="nav-right">
     <button class="nav-icon ms">search</button>
     <button class="nav-icon ms">favorite_border</button>
-    <button class="nav-cta">Get a Quote</button>
   </div>
 </nav>
 
@@ -37,42 +30,34 @@
       <div class="tab-content active" id="tab-model">
         <p class="sec-label">Choose Your Model</p>
         <div class="model-cards">
-          <div class="model-card active" data-model="crown" data-price="54450" data-name="Crown Platinum" data-sub="2.4L Hybrid MAX AWD">
+          <div class="model-card active" data-model="crown">
             <div>
               <div class="model-card-name">Crown</div>
-              <div class="model-card-sub">Platinum · Hybrid MAX AWD</div>
+              <div class="model-card-sub">Platinum - Hybrid MAX AWD</div>
             </div>
             <div style="margin-left:auto;text-align:right">
               <div class="model-badge">NEW</div>
-              <div class="model-card-price" style="margin-top:.4rem">$54,450</div>
             </div>
           </div>
-          <div class="model-card" data-model="camry" data-price="29950" data-name="Camry XSE" data-sub="2.5L 4-Cylinder">
+          <div class="model-card" data-model="camry">
             <div>
               <div class="model-card-name">Camry</div>
-              <div class="model-card-sub">XSE · 2.5L 4-Cylinder</div>
-            </div>
-            <div style="margin-left:auto;text-align:right">
-              <div class="model-card-price">$29,950</div>
+              <div class="model-card-sub">XSE - 2.5L 4-Cylinder</div>
             </div>
           </div>
-          <div class="model-card" data-model="supra" data-price="56545" data-name="GR Supra 3.0" data-sub="3.0L Turbocharged">
+          <div class="model-card" data-model="supra">
             <div>
               <div class="model-card-name">GR Supra</div>
-              <div class="model-card-sub">3.0 · Turbocharged</div>
+              <div class="model-card-sub">3.0 - Turbocharged</div>
             </div>
             <div style="margin-left:auto;text-align:right">
               <div class="model-badge" style="background:#222">GR</div>
-              <div class="model-card-price" style="margin-top:.4rem">$56,545</div>
             </div>
           </div>
-          <div class="model-card" data-model="rav4" data-price="31025" data-name="RAV4 XSE" data-sub="2.5L Hybrid AWD">
+          <div class="model-card" data-model="rav4">
             <div>
               <div class="model-card-name">RAV4</div>
-              <div class="model-card-sub">XSE Hybrid · AWD</div>
-            </div>
-            <div style="margin-left:auto;text-align:right">
-              <div class="model-card-price">$31,025</div>
+              <div class="model-card-sub">XSE Hybrid - AWD</div>
             </div>
           </div>
         </div>
@@ -96,21 +81,21 @@
             <div class="wheel-dot"></div>
             <div>
               <div class="wheel-pill-name">21-in. Split-Spoke Alloy</div>
-              <div class="wheel-pill-sub">Machined finish · Included</div>
+              <div class="wheel-pill-sub">Machined finish - Included</div>
             </div>
           </div>
           <div class="wheel-pill" data-wheel="21-in. Matte Black Sport">
             <div class="wheel-dot"></div>
             <div>
               <div class="wheel-pill-name">21-in. Matte Black Sport</div>
-              <div class="wheel-pill-sub">Dark Finish · +$400</div>
+              <div class="wheel-pill-sub">Dark Finish option</div>
             </div>
           </div>
           <div class="wheel-pill" data-wheel="20-in. Five-Spoke Dark Chrome">
             <div class="wheel-dot"></div>
             <div>
               <div class="wheel-pill-name">20-in. Dark Chrome</div>
-              <div class="wheel-pill-sub">Sport Package · +$800</div>
+              <div class="wheel-pill-sub">Sport package design</div>
             </div>
           </div>
         </div>
@@ -166,37 +151,12 @@
         </div>
       </div>
     </div>
-
-    <div class="panel-foot">
-      <div class="total-row">
-        <span class="total-lbl">Configured Price</span>
-        <span class="total-val" id="totalPrice">$54,450</span>
-      </div>
-      <button class="btn-red">Request a Quote</button>
-      <button class="btn-ghost">Save Configuration</button>
-    </div>
   </aside>
 
   <div class="canvas-wrap">
     <div class="env-glow" id="envGlow"></div>
 
-    <div class="step-bar">
-      <span class="step active">01 Model</span>
-      <span class="step-sep"></span>
-      <span class="step" id="step2">02 Exterior</span>
-      <span class="step-sep"></span>
-      <span class="step" id="step3">03 Interior</span>
-    </div>
-
-    <div class="canvas-color-tag" id="colorTag">Heavy Metal / Black</div>
-
     <div id="carCanvas">
-      <!--
-           CAR CANVAS - drop your car here
-           - <img src="car.png"/>
-           - Three.js / WebGL <canvas>
-           - 360-degree viewer embed
-      -->
       <div class="canvas-placeholder">
         <span class="ms">directions_car</span>
         <p class="canvas-ph-title">Car Canvas</p>
@@ -218,6 +178,6 @@
   </div>
 </div>
 
-<script src="toyota-js.js"></script>
+<script src="toyota-app.js"></script>
 </body>
 </html>

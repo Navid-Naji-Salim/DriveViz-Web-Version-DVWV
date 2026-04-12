@@ -2,7 +2,6 @@ const modelData = {
   crown: {
     name: "Crown Platinum",
     sub: "2.4L Hybrid MAX AWD",
-    price: 54450,
     specs: {
       power: "340 HP",
       torque: "400 lb-ft",
@@ -19,7 +18,6 @@ const modelData = {
   camry: {
     name: "Camry XSE",
     sub: "2.5L 4-Cylinder",
-    price: 29950,
     specs: {
       power: "203 HP",
       torque: "184 lb-ft",
@@ -36,7 +34,6 @@ const modelData = {
   supra: {
     name: "GR Supra 3.0",
     sub: "3.0L Turbocharged Inline-6",
-    price: 56545,
     specs: {
       power: "382 HP",
       torque: "368 lb-ft",
@@ -53,7 +50,6 @@ const modelData = {
   rav4: {
     name: "RAV4 XSE",
     sub: "2.5L Hybrid AWD",
-    price: 31025,
     specs: {
       power: "219 HP",
       torque: "163 lb-ft",
@@ -73,71 +69,68 @@ const envColors = {
   "Heavy Metal / Black": "radial-gradient(ellipse at 60% 40%, rgba(50,50,60,.25) 0%, transparent 70%)",
   "Wind Chill Pearl": "radial-gradient(ellipse at 60% 40%, rgba(220,215,200,.18) 0%, transparent 70%)",
   "Supersonic Red": "radial-gradient(ellipse at 60% 40%, rgba(140,0,0,.22) 0%, transparent 70%)",
-  "Blueprint": "radial-gradient(ellipse at 60% 40%, rgba(30,58,95,.25) 0%, transparent 70%)",
+  Blueprint: "radial-gradient(ellipse at 60% 40%, rgba(30,58,95,.25) 0%, transparent 70%)",
   "Oxide Bronze": "radial-gradient(ellipse at 60% 40%, rgba(163,140,109,.2) 0%, transparent 70%)",
   "Midnight Black": "radial-gradient(ellipse at 60% 40%, rgba(30,30,30,.3) 0%, transparent 70%)"
 };
 
-// Tabs
-document.querySelectorAll(".p-tab").forEach((btn) => {
-  btn.addEventListener("click", () => {
+const getById = (id) => {
+  const element = document.getElementById(id);
+
+  if (!(element instanceof HTMLElement)) {
+    throw new Error(`Missing element: ${id}`);
+  }
+
+  return element;
+};
+
+document.querySelectorAll(".p-tab").forEach((button) => {
+  button.addEventListener("click", () => {
     document.querySelectorAll(".p-tab").forEach((tab) => tab.classList.remove("active"));
     document.querySelectorAll(".tab-content").forEach((panel) => panel.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
-
-    const steps = { exterior: "step2", interior: "step3" };
-    document.querySelectorAll(".step").forEach((step) => step.classList.remove("active"));
-    document.querySelector(".step").classList.add("active");
-
-    if (steps[btn.dataset.tab]) {
-      document.getElementById(steps[btn.dataset.tab]).classList.add("active");
-    }
+    button.classList.add("active");
+    getById(`tab-${button.dataset.tab}`).classList.add("active");
   });
 });
 
-// Models
 document.querySelectorAll(".model-card").forEach((card) => {
   card.addEventListener("click", () => {
     document.querySelectorAll(".model-card").forEach((item) => item.classList.remove("active"));
     card.classList.add("active");
 
-    const model = modelData[card.dataset.model];
-    const specs = model.specs;
+    const modelKey = card.dataset.model;
+    const specs = modelData[modelKey].specs;
+    const modelName = card.querySelector(".model-card-name")?.textContent ?? modelData[modelKey].name;
 
-    document.getElementById("totalPrice").textContent = `$${model.price.toLocaleString()}`;
-    document.getElementById("watermark").textContent = card.querySelector(".model-card-name").textContent;
-    document.getElementById("sp-power").textContent = specs.power;
-    document.getElementById("sp-torque").textContent = specs.torque;
-    document.getElementById("sp-accel").textContent = specs.accel;
-    document.getElementById("sp-drive").textContent = specs.drive;
-    document.getElementById("sp-city").textContent = specs.city;
-    document.getElementById("sp-hwy").textContent = specs.hwy;
-    document.getElementById("sp-comb").textContent = specs.comb;
-    document.getElementById("sp-fuel").textContent = specs.fuel;
-    document.getElementById("sp-len").textContent = specs.len;
-    document.getElementById("sp-wb").textContent = specs.wb;
+    getById("watermark").textContent = modelName;
+    getById("sp-power").textContent = specs.power;
+    getById("sp-torque").textContent = specs.torque;
+    getById("sp-accel").textContent = specs.accel;
+    getById("sp-drive").textContent = specs.drive;
+    getById("sp-city").textContent = specs.city;
+    getById("sp-hwy").textContent = specs.hwy;
+    getById("sp-comb").textContent = specs.comb;
+    getById("sp-fuel").textContent = specs.fuel;
+    getById("sp-len").textContent = specs.len;
+    getById("sp-wb").textContent = specs.wb;
 
     flashCanvas();
   });
 });
 
-// Colors
 document.querySelectorAll(".swatch").forEach((swatch) => {
   swatch.addEventListener("click", () => {
     document.querySelectorAll(".swatch").forEach((item) => item.classList.remove("active"));
     swatch.classList.add("active");
 
-    const colorName = swatch.dataset.color;
-    document.getElementById("colorName").textContent = colorName;
-    document.getElementById("colorTag").textContent = colorName;
-    document.getElementById("envGlow").style.background = envColors[colorName] || "";
+    const colorName = swatch.dataset.color ?? "";
+    getById("colorName").textContent = colorName;
+    getById("envGlow").style.background = envColors[colorName] || "";
 
     flashCanvas();
   });
 });
 
-// Wheels
 document.querySelectorAll(".wheel-pill").forEach((pill) => {
   pill.addEventListener("click", () => {
     document.querySelectorAll(".wheel-pill").forEach((item) => item.classList.remove("active"));
@@ -146,7 +139,6 @@ document.querySelectorAll(".wheel-pill").forEach((pill) => {
   });
 });
 
-// Interior
 document.querySelectorAll(".int-item").forEach((item) => {
   item.addEventListener("click", () => {
     document.querySelectorAll(".int-item").forEach((entry) => {
@@ -155,6 +147,7 @@ document.querySelectorAll(".int-item").forEach((item) => {
     });
 
     item.classList.add("active");
+
     const check = document.createElement("span");
     check.className = "ms fill int-check";
     check.textContent = "check_circle";
@@ -164,25 +157,23 @@ document.querySelectorAll(".int-item").forEach((item) => {
   });
 });
 
-// View buttons
-document.querySelectorAll(".view-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
+document.querySelectorAll(".view-btn").forEach((button) => {
+  button.addEventListener("click", () => {
     document.querySelectorAll(".view-btn").forEach((item) => item.classList.remove("active"));
-    btn.classList.add("active");
+    button.classList.add("active");
   });
 });
 
 function flashCanvas() {
-  const canvas = document.getElementById("carCanvas");
+  const canvas = getById("carCanvas");
   canvas.classList.remove("flash");
   void canvas.offsetWidth;
   canvas.classList.add("flash");
 }
 
 const initialSwatch = document.querySelector(".swatch.active");
-if (initialSwatch) {
+if (initialSwatch?.dataset.color) {
   const initialColor = initialSwatch.dataset.color;
-  document.getElementById("colorName").textContent = initialColor;
-  document.getElementById("colorTag").textContent = initialColor;
-  document.getElementById("envGlow").style.background = envColors[initialColor] || "";
+  getById("colorName").textContent = initialColor;
+  getById("envGlow").style.background = envColors[initialColor] || "";
 }
