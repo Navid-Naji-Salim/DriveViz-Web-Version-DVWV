@@ -10,7 +10,6 @@
   --muted: #888;
   --muted2: #555;
   --font: "Inter", system-ui, sans-serif;
-  --nav: 64px;
 }
 
 *,
@@ -55,49 +54,9 @@ button {
   font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: var(--nav);
-  padding: 0 2rem;
-  border-bottom: 1px solid var(--border);
-  background: rgba(17, 18, 19, 0.7);
-  backdrop-filter: blur(20px);
-}
-
-.nav-logo {
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-}
-
-.nav-icon {
-  color: var(--muted);
-  font-size: 1.2rem;
-  transition: color 0.2s;
-}
-
-.nav-icon:hover {
-  color: #fff;
-}
-
 .layout {
   display: flex;
   height: 100vh;
-  padding-top: var(--nav);
 }
 
 .panel {
@@ -110,9 +69,18 @@ nav {
   background: var(--bg2);
 }
 
+.panel-brand {
+  padding: 1.35rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: #fff;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
 .panel-tabs {
   display: flex;
-  border-bottom: 1px solid var(--border);
 }
 
 .p-tab {
