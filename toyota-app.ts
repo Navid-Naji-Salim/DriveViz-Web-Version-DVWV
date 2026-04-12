@@ -173,10 +173,9 @@ const getById = <T extends HTMLElement>(id: string): T => {
 
 function applyEnvironment(presetKey: EnvironmentKey): void {
   const preset = environmentPresets[presetKey];
-  document.documentElement.style.setProperty("--env-backdrop", preset.backdrop);
+  getById("envBackdropLayer").style.background = `${preset.glow}, ${preset.backdrop}`;
   document.documentElement.style.setProperty("--env-ground", preset.ground);
   document.documentElement.style.setProperty("--env-horizon", preset.horizon);
-  getById("envGlow").style.background = preset.glow;
   getById("envBackdrop").textContent = preset.features.backdrop;
   getById("envGround").textContent = preset.features.ground;
   getById("envMood").textContent = preset.features.mood;
@@ -225,12 +224,7 @@ document.querySelectorAll<HTMLButtonElement>(".swatch").forEach((swatch) => {
 
     const colorName = swatch.dataset.color ?? "";
     getById("colorName").textContent = colorName;
-    const currentGlow = getById("envGlow").style.background;
-    const colorGlow = envColors[colorName];
-
-    if (colorGlow) {
-      getById("envGlow").style.background = `${colorGlow}, ${currentGlow || "transparent"}`;
-    }
+    getById("envGlow").style.background = envColors[colorName] || "";
 
     flashCanvas();
   });
@@ -294,10 +288,5 @@ if (initialEnvironment?.dataset.env) {
 if (initialSwatch?.dataset.color) {
   const initialColor = initialSwatch.dataset.color;
   getById("colorName").textContent = initialColor;
-  const colorGlow = envColors[initialColor];
-  const currentGlow = getById("envGlow").style.background;
-
-  if (colorGlow) {
-    getById("envGlow").style.background = `${colorGlow}, ${currentGlow || "transparent"}`;
-  }
+  getById("envGlow").style.background = envColors[initialColor] || "";
 }
