@@ -85,12 +85,12 @@ button {
 
 .p-tab {
   flex: 1;
-  padding: 0.85rem;
+  padding: 0.8rem 0.2rem;
   border-bottom: 2px solid transparent;
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.45rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: all 0.2s;
 }
@@ -251,6 +251,53 @@ button {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+}
+
+.env-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.env-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)), var(--bg3);
+  text-align: left;
+}
+
+.env-card-kicker {
+  color: var(--red);
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.env-card-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.env-card-sub {
+  color: var(--muted);
+  font-size: 0.58rem;
+  line-height: 1.7;
+}
+
+.env-note {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg3);
+  color: var(--muted);
+  font-size: 0.58rem;
+  line-height: 1.8;
 }
 
 .spec-box {
