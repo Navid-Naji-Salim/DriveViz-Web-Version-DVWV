@@ -10,14 +10,6 @@
   --muted: #888;
   --muted2: #555;
   --font: "Inter", system-ui, sans-serif;
-<<<<<<< HEAD
-  --env-backdrop: radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.08), transparent 38%),
-    linear-gradient(180deg, #1a1b1d 0%, #101112 56%, #0b0b0c 100%);
-  --env-ground: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
-  --env-horizon: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
-=======
-  --nav: 64px;
->>>>>>> parent of b3d8c1b (refactor: remove navigation bar and integrate brand into panel)
 }
 
 *,
@@ -62,49 +54,9 @@ button {
   font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: var(--nav);
-  padding: 0 2rem;
-  border-bottom: 1px solid var(--border);
-  background: rgba(17, 18, 19, 0.7);
-  backdrop-filter: blur(20px);
-}
-
-.nav-logo {
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-}
-
-.nav-icon {
-  color: var(--muted);
-  font-size: 1.2rem;
-  transition: color 0.2s;
-}
-
-.nav-icon:hover {
-  color: #fff;
-}
-
 .layout {
   display: flex;
   height: 100vh;
-  padding-top: var(--nav);
 }
 
 .panel {
@@ -117,17 +69,22 @@ nav {
   background: var(--bg2);
 }
 
+.panel-brand {
+  padding: 1.35rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: #fff;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
 .panel-tabs {
   display: flex;
-<<<<<<< HEAD
-  flex-wrap: wrap;
-=======
-  border-bottom: 1px solid var(--border);
->>>>>>> parent of b3d8c1b (refactor: remove navigation bar and integrate brand into panel)
 }
 
 .p-tab {
-  flex: 1 1 33.333%;
+  flex: 1;
   padding: 0.85rem;
   border-bottom: 2px solid transparent;
   color: var(--muted);
@@ -296,83 +253,6 @@ nav {
   gap: 0.75rem;
 }
 
-.env-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-
-.env-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.35rem;
-  padding: 0.95rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)), var(--bg3);
-  text-align: left;
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-}
-
-.env-card:hover {
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.16);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)), var(--bg4);
-}
-
-.env-card.active {
-  border-color: var(--red);
-  background: linear-gradient(180deg, rgba(189, 0, 20, 0.18), rgba(189, 0, 20, 0.02)), var(--bg3);
-}
-
-.env-card-kicker {
-  color: var(--red);
-  font-size: 0.5rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.env-card-name {
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.env-card-sub {
-  color: var(--muted);
-  font-size: 0.58rem;
-  line-height: 1.7;
-}
-
-.env-feature-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-}
-
-.env-feature {
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: var(--bg3);
-}
-
-.env-feature-lbl {
-  margin-bottom: 0.32rem;
-  color: var(--muted);
-  font-size: 0.5rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.env-feature-val {
-  font-size: 0.68rem;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
 .spec-box {
   padding: 0.75rem;
   border: 1px solid var(--border);
@@ -402,13 +282,6 @@ nav {
   flex-direction: column;
   overflow: hidden;
   background: var(--bg);
-}
-
-.env-backdrop {
-  position: absolute;
-  inset: 0;
-  background: var(--env-backdrop);
-  transition: background 0.9s ease;
 }
 
 .env-glow {
@@ -479,8 +352,7 @@ nav {
   left: 0;
   z-index: 4;
   height: 35%;
-  background: var(--env-ground);
-  transition: background 0.9s ease;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
   pointer-events: none;
 }
 
@@ -490,8 +362,7 @@ nav {
   bottom: 34%;
   left: 10%;
   height: 1px;
-  background: var(--env-horizon);
-  transition: background 0.9s ease;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
 }
 
 .view-controls {

@@ -74,61 +74,6 @@ const envColors = {
   "Midnight Black": "radial-gradient(ellipse at 60% 40%, rgba(30,30,30,.3) 0%, transparent 70%)"
 };
 
-const environmentPresets = {
-  studio: {
-    backdrop:
-      "radial-gradient(circle at 50% 18%, rgba(255,255,255,.08), transparent 38%), linear-gradient(180deg, #1a1b1d 0%, #101112 56%, #0b0b0c 100%)",
-    glow: "radial-gradient(ellipse at 50% 44%, rgba(255,255,255,.08) 0%, transparent 58%)",
-    ground: "linear-gradient(to top, rgba(0,0,0,.6), transparent)",
-    horizon: "linear-gradient(to right, transparent, rgba(255,255,255,.06), transparent)",
-    features: {
-      backdrop: "Neutral gradient dome",
-      ground: "Soft studio floor fade",
-      mood: "Clean showroom focus",
-      highlights: "Balanced reflections"
-    }
-  },
-  sunset: {
-    backdrop:
-      "radial-gradient(circle at 52% 22%, rgba(255,190,120,.24), transparent 30%), linear-gradient(180deg, #5d3a33 0%, #2a1e24 48%, #121316 100%)",
-    glow: "radial-gradient(ellipse at 55% 42%, rgba(255,146,71,.26) 0%, transparent 62%)",
-    ground: "linear-gradient(to top, rgba(33,16,10,.72), transparent)",
-    horizon: "linear-gradient(to right, transparent, rgba(255,169,103,.14), transparent)",
-    features: {
-      backdrop: "Warm amber sunset sky",
-      ground: "Smoked asphalt fade",
-      mood: "Golden-hour energy",
-      highlights: "Warm side reflections"
-    }
-  },
-  night: {
-    backdrop:
-      "radial-gradient(circle at 50% 14%, rgba(68,94,160,.13), transparent 26%), linear-gradient(180deg, #0e1320 0%, #090b11 52%, #040506 100%)",
-    glow: "radial-gradient(ellipse at 58% 40%, rgba(73,102,190,.24) 0%, transparent 62%)",
-    ground: "linear-gradient(to top, rgba(3,5,9,.88), transparent)",
-    horizon: "linear-gradient(to right, transparent, rgba(116,145,255,.12), transparent)",
-    features: {
-      backdrop: "City-night blue blackout",
-      ground: "Glossy dark pavement",
-      mood: "Focused, dramatic contrast",
-      highlights: "Sharper cool reflections"
-    }
-  },
-  alpine: {
-    backdrop:
-      "radial-gradient(circle at 48% 18%, rgba(219,241,255,.16), transparent 32%), linear-gradient(180deg, #d9e5ee 0%, #8ea4b5 44%, #39444d 100%)",
-    glow: "radial-gradient(ellipse at 54% 42%, rgba(197,232,255,.22) 0%, transparent 60%)",
-    ground: "linear-gradient(to top, rgba(54,67,79,.7), transparent)",
-    horizon: "linear-gradient(to right, transparent, rgba(215,236,255,.22), transparent)",
-    features: {
-      backdrop: "Open alpine daylight",
-      ground: "Cool slate surface",
-      mood: "Fresh high-altitude clarity",
-      highlights: "Bright crisp reflections"
-    }
-  }
-};
-
 const getById = (id) => {
   const element = document.getElementById(id);
 
@@ -138,19 +83,6 @@ const getById = (id) => {
 
   return element;
 };
-
-function applyEnvironment(presetKey) {
-  const preset = environmentPresets[presetKey];
-  document.documentElement.style.setProperty("--env-backdrop", preset.backdrop);
-  document.documentElement.style.setProperty("--env-ground", preset.ground);
-  document.documentElement.style.setProperty("--env-horizon", preset.horizon);
-  getById("envGlow").style.background = preset.glow;
-  getById("envBackdrop").textContent = preset.features.backdrop;
-  getById("envGround").textContent = preset.features.ground;
-  getById("envMood").textContent = preset.features.mood;
-  getById("envHighlights").textContent = preset.features.highlights;
-  flashCanvas();
-}
 
 document.querySelectorAll(".p-tab").forEach((button) => {
   button.addEventListener("click", () => {
@@ -193,22 +125,9 @@ document.querySelectorAll(".swatch").forEach((swatch) => {
 
     const colorName = swatch.dataset.color ?? "";
     getById("colorName").textContent = colorName;
-    const currentGlow = getById("envGlow").style.background;
-    const colorGlow = envColors[colorName];
-
-    if (colorGlow) {
-      getById("envGlow").style.background = `${colorGlow}, ${currentGlow || "transparent"}`;
-    }
+    getById("envGlow").style.background = envColors[colorName] || "";
 
     flashCanvas();
-  });
-});
-
-document.querySelectorAll(".env-card").forEach((card) => {
-  card.addEventListener("click", () => {
-    document.querySelectorAll(".env-card").forEach((item) => item.classList.remove("active"));
-    card.classList.add("active");
-    applyEnvironment(card.dataset.env);
   });
 });
 
@@ -253,19 +172,8 @@ function flashCanvas() {
 }
 
 const initialSwatch = document.querySelector(".swatch.active");
-const initialEnvironment = document.querySelector(".env-card.active");
-
-if (initialEnvironment?.dataset.env) {
-  applyEnvironment(initialEnvironment.dataset.env);
-}
-
 if (initialSwatch?.dataset.color) {
   const initialColor = initialSwatch.dataset.color;
   getById("colorName").textContent = initialColor;
-  const colorGlow = envColors[initialColor];
-  const currentGlow = getById("envGlow").style.background;
-
-  if (colorGlow) {
-    getById("envGlow").style.background = `${colorGlow}, ${currentGlow || "transparent"}`;
-  }
+  getById("envGlow").style.background = envColors[initialColor] || "";
 }

@@ -9,21 +9,13 @@
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">TOYOTA</div>
-  <div class="nav-right">
-    <button class="nav-icon ms">search</button>
-    <button class="nav-icon ms">favorite_border</button>
-  </div>
-</nav>
-
 <div class="layout">
   <aside class="panel">
+    <div class="panel-brand">TOYOTA</div>
     <div class="panel-tabs">
       <button class="p-tab active" data-tab="model">Model</button>
       <button class="p-tab" data-tab="exterior">Exterior</button>
       <button class="p-tab" data-tab="interior">Interior</button>
-      <button class="p-tab" data-tab="environment">Environment</button>
       <button class="p-tab" data-tab="specs">Specs</button>
     </div>
 
@@ -130,52 +122,6 @@
         </div>
       </div>
 
-      <div class="tab-content" id="tab-environment">
-        <p class="sec-label">Scene Preset</p>
-        <div class="env-list">
-          <button class="env-card active" data-env="studio">
-            <span class="env-card-kicker">Default</span>
-            <span class="env-card-name">Studio Halo</span>
-            <span class="env-card-sub">Neutral lighting with a premium showroom glow.</span>
-          </button>
-          <button class="env-card" data-env="sunset">
-            <span class="env-card-kicker">Warm</span>
-            <span class="env-card-name">Sunset Run</span>
-            <span class="env-card-sub">Amber sky tones with a soft horizon fade.</span>
-          </button>
-          <button class="env-card" data-env="night">
-            <span class="env-card-kicker">Dark</span>
-            <span class="env-card-name">Midnight Street</span>
-            <span class="env-card-sub">Deep blue-black atmosphere with crisp reflections.</span>
-          </button>
-          <button class="env-card" data-env="alpine">
-            <span class="env-card-kicker">Cool</span>
-            <span class="env-card-name">Alpine Air</span>
-            <span class="env-card-sub">Bright open light with icy mountain tones.</span>
-          </button>
-        </div>
-
-        <p class="sec-label">What Changes</p>
-        <div class="env-feature-grid">
-          <div class="env-feature">
-            <p class="env-feature-lbl">Backdrop</p>
-            <p class="env-feature-val" id="envBackdrop">Neutral gradient dome</p>
-          </div>
-          <div class="env-feature">
-            <p class="env-feature-lbl">Ground</p>
-            <p class="env-feature-val" id="envGround">Soft studio floor fade</p>
-          </div>
-          <div class="env-feature">
-            <p class="env-feature-lbl">Mood</p>
-            <p class="env-feature-val" id="envMood">Clean showroom focus</p>
-          </div>
-          <div class="env-feature">
-            <p class="env-feature-lbl">Highlights</p>
-            <p class="env-feature-val" id="envHighlights">Balanced reflections</p>
-          </div>
-        </div>
-      </div>
-
       <div class="tab-content" id="tab-specs">
         <p class="sec-label">Performance</p>
         <div class="spec-row">
@@ -201,7 +147,6 @@
   </aside>
 
   <div class="canvas-wrap">
-    <div class="env-backdrop" id="envBackdropLayer"></div>
     <div class="env-glow" id="envGlow"></div>
 
     <div id="carCanvas">
