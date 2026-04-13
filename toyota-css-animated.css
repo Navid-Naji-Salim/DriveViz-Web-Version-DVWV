@@ -114,7 +114,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.28rem;
+  margin-bottom: 0.42rem;
   animation: logoDropIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
@@ -215,11 +215,11 @@ button {
 
 /* The word IRAQ itself */
 .brand-name-iraq {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 900;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.38em;
   color: var(--red2);
-  text-transform: lowercase;
+  text-transform: uppercase;
   /* Layered glow for depth — not garish, just present */
   text-shadow:
     0 0 12px rgba(235, 10, 30, 0.45),
