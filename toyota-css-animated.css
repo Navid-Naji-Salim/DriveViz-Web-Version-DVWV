@@ -95,7 +95,7 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 0;
-  padding: 1.3rem 1.5rem 1.1rem;
+  padding: 1rem 1.5rem 0.7rem;
   border-bottom: 1px solid var(--border);
   color: #fff;
   text-align: center;
@@ -105,46 +105,8 @@ button {
 }
 
 /* ── Top corner accent lines ── */
-.panel-brand::before,
-.panel-brand::after {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  opacity: 0.35;
-  animation: cornerFadeIn 0.6s ease 1.2s both;
-}
-.panel-brand::before {
-  top: 8px; left: 10px;
-  border-top: 1px solid var(--red2);
-  border-left: 1px solid var(--red2);
-}
-.panel-brand::after {
-  top: 8px; right: 10px;
-  border-top: 1px solid var(--red2);
-  border-right: 1px solid var(--red2);
-}
-
-@keyframes cornerFadeIn {
-  from { opacity: 0; transform: scale(0.6); }
-  to   { opacity: 0.35; transform: scale(1); }
-}
 
 /* ── Sweeping red line at bottom ── */
-.brand-sweep {
-  position: absolute;
-  bottom: 0; left: -60%; width: 60%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--red2), transparent);
-  animation: brandLine 3.5s ease-in-out 1s infinite;
-  pointer-events: none;
-}
-
-@keyframes brandLine {
-  0%   { left: -60%; opacity: 0; }
-  15%  { opacity: 1; }
-  85%  { opacity: 1; }
-  100% { left: 160%; opacity: 0; }
-}
 
 /* ── Logo wrapper ── */
 .brand-logo-wrap {
@@ -152,7 +114,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.28rem;
   animation: logoDropIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
@@ -220,9 +182,9 @@ button {
 /* ── Text block ── */
 .brand-text-block {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0;
+  gap: 0.52rem;
   line-height: 1;
 }
 
@@ -243,78 +205,21 @@ button {
 }
 
 /* Thin divider between TOYOTA and IRAQ row */
-.brand-divider {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0.3rem 0 0.28rem;
-  animation: dividerReveal 0.5s ease 0.85s both;
-}
 
-@keyframes dividerReveal {
-  from { opacity: 0; transform: scaleX(0.4); }
-  to   { opacity: 1; transform: scaleX(1); }
-}
-
-.brand-divider-line {
-  height: 1px;
-  width: 28px;
-  background: linear-gradient(90deg, transparent, rgba(189,0,20,0.55));
-}
-.brand-divider-line:last-child {
-  background: linear-gradient(90deg, rgba(189,0,20,0.55), transparent);
-}
-.brand-divider-dot {
-  width: 3px; height: 3px;
-  border-radius: 50%;
-  background: var(--red2);
-  box-shadow: 0 0 5px var(--red2);
-  animation: dotPulse 2.5s ease-in-out 1.5s infinite;
-}
-
-@keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 4px var(--red2); transform: scale(1);   }
-  50%       { box-shadow: 0 0 9px var(--red2); transform: scale(1.5); }
-}
 
 /* IRAQ row — sub-brand treatment */
-.brand-iraq-row {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  animation: iraqReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1s both;
-}
-
 @keyframes iraqReveal {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0);   }
 }
 
-/* Small "AUTHORIZED DISTRIBUTOR" kicker above IRAQ */
-.brand-iraq-kicker {
-  display: block;
-  font-size: 0.38rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: rgba(255,255,255,0.3);
-  text-transform: uppercase;
-  text-align: center;
-  margin-bottom: 0.18rem;
-  animation: kickerFade 0.6s ease 1.3s both;
-}
-
-@keyframes kickerFade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
 /* The word IRAQ itself */
 .brand-name-iraq {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 900;
-  letter-spacing: 0.38em;
+  letter-spacing: 0.18em;
   color: var(--red2);
-  text-transform: uppercase;
+  text-transform: lowercase;
   /* Layered glow for depth — not garish, just present */
   text-shadow:
     0 0 12px rgba(235, 10, 30, 0.45),
@@ -339,21 +244,6 @@ button {
   }
 }
 
-/* Underline bar under IRAQ only */
-.brand-name-iraq::after {
-  content: "";
-  position: absolute;
-  bottom: -3px; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--red2), transparent);
-  transform-origin: center;
-  animation: iraqUnderline 0.4s ease 1.6s both;
-}
-
-@keyframes iraqUnderline {
-  from { transform: scaleX(0); opacity: 0; }
-  to   { transform: scaleX(1); opacity: 1; }
-}
 
 /* ─── Tabs ─── */
 .panel-tabs {
