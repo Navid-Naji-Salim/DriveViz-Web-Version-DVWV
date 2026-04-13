@@ -132,7 +132,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.42rem;
+  margin-bottom: 0.54rem;
   animation: logoDropIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
