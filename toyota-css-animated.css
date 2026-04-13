@@ -109,6 +109,24 @@ button {
 /* ── Sweeping red line at bottom ── */
 
 /* ── Logo wrapper ── */
+.brand-sweep {
+  position: absolute;
+  bottom: 0;
+  left: -60%;
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red2), transparent);
+  animation: brandLine 3.5s ease-in-out 1s infinite;
+  pointer-events: none;
+}
+
+@keyframes brandLine {
+  0%   { left: -60%; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: 160%; opacity: 0; }
+}
+
 .brand-logo-wrap {
   position: relative;
   display: flex;
