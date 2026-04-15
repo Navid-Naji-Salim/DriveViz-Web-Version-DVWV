@@ -80,19 +80,105 @@ const getById = (id) => {
     }
     return element;
 };
-// Animate a spec value update with a flip
+const rootStyle = document.documentElement.style;
+const mobileQuery = window.matchMedia("(max-width: 900px)");
+const panel = document.querySelector(".panel");
+const panelHandle = document.querySelector(".panel-handle");
+const canvasModelName = getById("canvasModelName");
+const canvasModelSub = getById("canvasModelSub");
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+let mobilePanelHeight = 0;
+let mobilePanelOffset = 0;
+let mobilePanelMaxOffset = 0;
+let dragStartY = 0;
+let dragStartOffset = 0;
+let isDraggingPanel = false;
+function setMobilePanelOffset(offset) {
+    mobilePanelOffset = clamp(offset, 0, mobilePanelMaxOffset);
+    rootStyle.setProperty("--mobile-panel-offset", `${mobilePanelOffset}px`);
+}
+function syncMobilePanelMetrics() {
+    if (!(panel instanceof HTMLElement) || !mobileQuery.matches) {
+        rootStyle.setProperty("--mobile-panel-height", "0px");
+        rootStyle.setProperty("--mobile-panel-offset", "0px");
+        return;
+    }
+    mobilePanelHeight = panel.getBoundingClientRect().height;
+    mobilePanelMaxOffset = Math.max(0, mobilePanelHeight - 86);
+    rootStyle.setProperty("--mobile-panel-height", `${mobilePanelHeight}px`);
+    setMobilePanelOffset(Math.min(mobilePanelOffset, mobilePanelMaxOffset));
+}
+function snapMobilePanel() {
+    if (!(panel instanceof HTMLElement)) {
+        return;
+    }
+    const snapPoint = mobilePanelMaxOffset * 0.4;
+    const nextOffset = mobilePanelOffset > snapPoint ? mobilePanelMaxOffset : 0;
+    setMobilePanelOffset(nextOffset);
+    panel.classList.remove("dragging");
+}
+function startDraggingPanel(clientY) {
+    if (!(panel instanceof HTMLElement) || !mobileQuery.matches) {
+        return;
+    }
+    syncMobilePanelMetrics();
+    isDraggingPanel = true;
+    dragStartY = clientY;
+    dragStartOffset = mobilePanelOffset;
+    panel.classList.add("dragging");
+}
+function updateDraggingPanel(clientY) {
+    if (!isDraggingPanel) {
+        return;
+    }
+    const delta = clientY - dragStartY;
+    setMobilePanelOffset(dragStartOffset + delta);
+}
+function stopDraggingPanel() {
+    if (!(panel instanceof HTMLElement) || !isDraggingPanel) {
+        return;
+    }
+    isDraggingPanel = false;
+    snapMobilePanel();
+}
+function bindPanelDrag(element) {
+    if (!(element instanceof HTMLElement)) {
+        return;
+    }
+    element.addEventListener("pointerdown", (event) => {
+        startDraggingPanel(event.clientY);
+        element.setPointerCapture(event.pointerId);
+    });
+    element.addEventListener("pointermove", (event) => {
+        updateDraggingPanel(event.clientY);
+    });
+    element.addEventListener("pointerup", () => {
+        stopDraggingPanel();
+    });
+    element.addEventListener("pointercancel", () => {
+        stopDraggingPanel();
+    });
+}
+bindPanelDrag(panelHandle);
+window.addEventListener("pointerup", stopDraggingPanel);
+window.addEventListener("resize", syncMobilePanelMetrics);
+mobileQuery.addEventListener("change", () => {
+    if (panel instanceof HTMLElement) {
+        panel.classList.remove("dragging");
+    }
+    mobilePanelOffset = 0;
+    syncMobilePanelMetrics();
+});
 function setSpecVal(id, value) {
     const el = getById(id);
     el.classList.remove("updating");
-    void el.offsetWidth; // reflow
+    void el.offsetWidth;
     el.classList.add("updating");
-    // Set value mid-animation (at the invisible frame)
     setTimeout(() => {
         el.textContent = value;
     }, 140);
     el.addEventListener("animationend", () => el.classList.remove("updating"), { once: true });
 }
-// Animate watermark text change
 function setWatermark(text) {
     const el = getById("watermark");
     el.classList.remove("changing");
@@ -103,26 +189,26 @@ function setWatermark(text) {
     }, 160);
     el.addEventListener("animationend", () => el.classList.remove("changing"), { once: true });
 }
-// ─── Tab switching ───
 document.querySelectorAll(".p-tab").forEach((button) => {
     button.addEventListener("click", () => {
         document.querySelectorAll(".p-tab").forEach((tab) => tab.classList.remove("active"));
-        document.querySelectorAll(".tab-content").forEach((panel) => panel.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach((tabPanel) => tabPanel.classList.remove("active"));
         button.classList.add("active");
         getById(`tab-${button.dataset.tab}`).classList.add("active");
     });
 });
-// ─── Model selection ───
 document.querySelectorAll(".model-card").forEach((card) => {
     card.addEventListener("click", () => {
         var _a, _b;
         document.querySelectorAll(".model-card").forEach((item) => item.classList.remove("active"));
         card.classList.add("active");
         const modelKey = card.dataset.model;
-        const specs = modelData[modelKey].specs;
+        const model = modelData[modelKey];
+        const specs = model.specs;
         const modelName = (_b = (_a = card.querySelector(".model-card-name")) === null || _a === void 0 ? void 0 : _a.textContent) !== null && _b !== void 0 ? _b : modelData[modelKey].name;
         setWatermark(modelName);
-        // Stagger spec flips for a cascade effect
+        canvasModelName.textContent = modelName;
+        canvasModelSub.textContent = card.querySelector(".model-card-sub")?.textContent ?? model.sub;
         const specIds = [
             ["sp-power", specs.power],
             ["sp-torque", specs.torque],
@@ -141,7 +227,6 @@ document.querySelectorAll(".model-card").forEach((card) => {
         flashCanvas();
     });
 });
-// ─── Color swatches ───
 document.querySelectorAll(".swatch").forEach((swatch) => {
     swatch.addEventListener("click", () => {
         var _a;
@@ -153,7 +238,6 @@ document.querySelectorAll(".swatch").forEach((swatch) => {
         flashCanvas();
     });
 });
-// ─── Wheel pills ───
 document.querySelectorAll(".wheel-pill").forEach((pill) => {
     pill.addEventListener("click", () => {
         document.querySelectorAll(".wheel-pill").forEach((item) => item.classList.remove("active"));
@@ -161,7 +245,6 @@ document.querySelectorAll(".wheel-pill").forEach((pill) => {
         flashCanvas();
     });
 });
-// ─── Interior items ───
 document.querySelectorAll(".int-item").forEach((item) => {
     item.addEventListener("click", () => {
         document.querySelectorAll(".int-item").forEach((entry) => {
@@ -177,31 +260,33 @@ document.querySelectorAll(".int-item").forEach((item) => {
         flashCanvas();
     });
 });
-// ─── View buttons ───
 document.querySelectorAll(".view-btn").forEach((button) => {
     button.addEventListener("click", () => {
         document.querySelectorAll(".view-btn").forEach((item) => item.classList.remove("active"));
         button.classList.add("active");
     });
 });
-// ─── Environment cards ───
 document.querySelectorAll(".env-card").forEach((card) => {
     card.addEventListener("click", () => {
         document.querySelectorAll(".env-card").forEach((item) => item.classList.remove("active"));
         card.classList.add("active");
     });
 });
-// ─── Flash canvas ───
 function flashCanvas() {
     const canvas = getById("carCanvas");
     canvas.classList.remove("flash");
     void canvas.offsetWidth;
     canvas.classList.add("flash");
 }
-// ─── Init ───
 const initialSwatch = document.querySelector(".swatch.active");
 if (initialSwatch === null || initialSwatch === void 0 ? void 0 : initialSwatch.dataset.color) {
     const initialColor = initialSwatch.dataset.color;
     getById("colorName").textContent = initialColor;
     getById("envGlow").style.background = envColors[initialColor] || "";
 }
+const initialModelCard = document.querySelector(".model-card.active");
+if (initialModelCard instanceof HTMLElement) {
+    canvasModelName.textContent = initialModelCard.querySelector(".model-card-name")?.textContent ?? "Crown";
+    canvasModelSub.textContent = initialModelCard.querySelector(".model-card-sub")?.textContent ?? "Platinum - Hybrid MAX AWD";
+}
+syncMobilePanelMetrics();

@@ -12,6 +12,9 @@
   --muted: #888;
   --muted2: #555;
   --font: "Inter", system-ui, sans-serif;
+  --mobile-panel-height: 0px;
+  --mobile-panel-offset: 0px;
+  --mobile-panel-visible: calc(var(--mobile-panel-height) - var(--mobile-panel-offset));
 }
 
 *,
@@ -60,6 +63,7 @@ button {
 .layout {
   display: flex;
   height: 100vh;
+  position: relative;
 }
 
 /* ─── Panel ─── */
@@ -72,6 +76,10 @@ button {
   border-right: 1px solid var(--border);
   background: var(--bg2);
   animation: panelSlideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.panel-handle {
+  display: none;
 }
 
 @keyframes panelSlideIn {
@@ -958,10 +966,11 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 0.8rem;
-  opacity: 0.18;
+  opacity: 0.3;
   pointer-events: none;
   user-select: none;
   animation: placeholderFloat 5s ease-in-out infinite;
+  text-align: center;
 }
 
 @keyframes placeholderFloat {
@@ -981,16 +990,16 @@ button {
 }
 
 .canvas-ph-title {
-  font-size: 0.7rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .canvas-ph-sub {
   max-width: 260px;
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   line-height: 1.7;
   text-align: center;
 }
@@ -1134,19 +1143,21 @@ button {
   }
 
   .layout {
-    position: relative;
-    flex-direction: column;
     height: 100dvh;
     min-height: 100dvh;
   }
 
   .canvas-wrap {
-    order: 1;
-    min-height: 54dvh;
+    min-height: 100dvh;
+    height: 100dvh;
   }
 
   .panel {
-    order: 2;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
     width: 100%;
     height: 46dvh;
     min-height: 320px;
@@ -1157,29 +1168,41 @@ button {
       linear-gradient(180deg, rgba(33, 35, 37, 0.98), rgba(18, 19, 20, 0.98)),
       var(--bg2);
     box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.45);
-    animation: panelRiseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform: translateY(var(--mobile-panel-offset));
+    opacity: 1;
+    animation: panelFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
   }
 
-  .panel::before {
-    content: "";
-    position: absolute;
-    top: 0.65rem;
-    left: 50%;
+  .panel.dragging {
+    transition: none;
+  }
+
+  .panel-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    padding: 0.85rem 1rem 0.45rem;
+    touch-action: none;
+    cursor: ns-resize;
+    user-select: none;
+  }
+
+  .panel-handle-bar {
     width: 3.25rem;
     height: 0.28rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.16);
-    transform: translateX(-50%);
     box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
   }
 
-  @keyframes panelRiseIn {
+  @keyframes panelFadeIn {
     from {
-      transform: translateY(100%);
       opacity: 0;
     }
     to {
-      transform: translateY(0);
       opacity: 1;
     }
   }
@@ -1188,7 +1211,7 @@ button {
     flex-direction: row;
     justify-content: center;
     gap: 0.85rem;
-    padding: 1.35rem 1rem 0.9rem;
+    padding: 0.35rem 1rem 0.9rem;
     text-align: left;
   }
 
@@ -1324,12 +1347,12 @@ button {
   }
 
   .watermark {
-    bottom: calc(46dvh + 1.2rem);
-    font-size: 18vw;
+    bottom: max(calc(var(--mobile-panel-visible) + 8%), 12%);
   }
 
   .view-controls {
-    bottom: calc(46dvh + 1.25rem);
+    top: max(1rem, env(safe-area-inset-top, 0px));
+    bottom: auto;
     padding: 0.35rem;
     gap: 0.25rem;
   }
@@ -1344,12 +1367,12 @@ button {
   }
 
   .canvas-ph-title {
-    font-size: 0.82rem;
+    font-size: 1rem;
   }
 
   .canvas-ph-sub {
     max-width: 240px;
-    font-size: 0.7rem;
+    font-size: 0.74rem;
   }
 }
 
@@ -1360,7 +1383,8 @@ button {
   }
 
   .canvas-wrap {
-    min-height: 50dvh;
+    min-height: 100dvh;
+    height: 100dvh;
   }
 
   .panel-brand {
@@ -1373,7 +1397,7 @@ button {
   }
 
   .view-controls {
-    bottom: calc(50dvh + 0.9rem);
+    top: max(0.8rem, env(safe-area-inset-top, 0px));
     left: 50%;
     max-width: calc(100vw - 1.5rem);
     overflow-x: auto;
@@ -1385,8 +1409,7 @@ button {
   }
 
   .watermark {
-    bottom: calc(50dvh + 1rem);
-    font-size: 22vw;
+    bottom: max(calc(var(--mobile-panel-visible) + 6%), 11%);
   }
 
   .ground {

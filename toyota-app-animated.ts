@@ -1,6 +1,4 @@
-type ModelKey = "crown" | "camry" | "supra" | "rav4";
-
-type ModelSpecs = {
+type Specs = {
   power: string;
   torque: string;
   accel: string;
@@ -13,9 +11,9 @@ type ModelSpecs = {
   wb: string;
 };
 
-type ModelData = Record<ModelKey, { name: string; sub: string; specs: ModelSpecs }>;
+type ModelKey = "crown" | "camry" | "supra" | "rav4";
 
-const modelData: ModelData = {
+const modelData: Record<ModelKey, { name: string; sub: string; specs: Specs }> = {
   crown: {
     name: "Crown Platinum",
     sub: "2.4L Hybrid MAX AWD",
@@ -29,8 +27,8 @@ const modelData: ModelData = {
       comb: "30",
       fuel: "Hybrid",
       len: "196 in",
-      wb: "112 in"
-    }
+      wb: "112 in",
+    },
   },
   camry: {
     name: "Camry XSE",
@@ -45,8 +43,8 @@ const modelData: ModelData = {
       comb: "32",
       fuel: "Gasoline",
       len: "192 in",
-      wb: "111 in"
-    }
+      wb: "111 in",
+    },
   },
   supra: {
     name: "GR Supra 3.0",
@@ -61,8 +59,8 @@ const modelData: ModelData = {
       comb: "25",
       fuel: "Premium",
       len: "172 in",
-      wb: "97 in"
-    }
+      wb: "97 in",
+    },
   },
   rav4: {
     name: "RAV4 XSE",
@@ -77,9 +75,9 @@ const modelData: ModelData = {
       comb: "40",
       fuel: "Hybrid",
       len: "180 in",
-      wb: "105 in"
-    }
-  }
+      wb: "105 in",
+    },
+  },
 };
 
 const envColors: Record<string, string> = {
@@ -88,66 +86,182 @@ const envColors: Record<string, string> = {
   "Supersonic Red": "radial-gradient(ellipse at 60% 40%, rgba(140,0,0,.22) 0%, transparent 70%)",
   Blueprint: "radial-gradient(ellipse at 60% 40%, rgba(30,58,95,.25) 0%, transparent 70%)",
   "Oxide Bronze": "radial-gradient(ellipse at 60% 40%, rgba(163,140,109,.2) 0%, transparent 70%)",
-  "Midnight Black": "radial-gradient(ellipse at 60% 40%, rgba(30,30,30,.3) 0%, transparent 70%)"
+  "Midnight Black": "radial-gradient(ellipse at 60% 40%, rgba(30,30,30,.3) 0%, transparent 70%)",
 };
 
-const getById = <T extends HTMLElement>(id: string): T => {
+const getById = (id: string): HTMLElement => {
   const element = document.getElementById(id);
+
   if (!(element instanceof HTMLElement)) {
     throw new Error(`Missing element: ${id}`);
   }
-  return element as T;
+
+  return element;
 };
 
-// Animate a spec value update with a flip
-function setSpecVal(id: string, value: string): void {
+const rootStyle = document.documentElement.style;
+const mobileQuery = window.matchMedia("(max-width: 900px)");
+const panel = document.querySelector(".panel");
+const panelHandle = document.querySelector(".panel-handle");
+const canvasModelName = getById("canvasModelName");
+const canvasModelSub = getById("canvasModelSub");
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+let mobilePanelHeight = 0;
+let mobilePanelOffset = 0;
+let mobilePanelMaxOffset = 0;
+let dragStartY = 0;
+let dragStartOffset = 0;
+let isDraggingPanel = false;
+
+function setMobilePanelOffset(offset: number) {
+  mobilePanelOffset = clamp(offset, 0, mobilePanelMaxOffset);
+  rootStyle.setProperty("--mobile-panel-offset", `${mobilePanelOffset}px`);
+}
+
+function syncMobilePanelMetrics() {
+  if (!(panel instanceof HTMLElement) || !mobileQuery.matches) {
+    rootStyle.setProperty("--mobile-panel-height", "0px");
+    rootStyle.setProperty("--mobile-panel-offset", "0px");
+    return;
+  }
+
+  mobilePanelHeight = panel.getBoundingClientRect().height;
+  mobilePanelMaxOffset = Math.max(0, mobilePanelHeight - 86);
+  rootStyle.setProperty("--mobile-panel-height", `${mobilePanelHeight}px`);
+  setMobilePanelOffset(Math.min(mobilePanelOffset, mobilePanelMaxOffset));
+}
+
+function snapMobilePanel() {
+  if (!(panel instanceof HTMLElement)) {
+    return;
+  }
+
+  const snapPoint = mobilePanelMaxOffset * 0.4;
+  const nextOffset = mobilePanelOffset > snapPoint ? mobilePanelMaxOffset : 0;
+
+  setMobilePanelOffset(nextOffset);
+  panel.classList.remove("dragging");
+}
+
+function startDraggingPanel(clientY: number) {
+  if (!(panel instanceof HTMLElement) || !mobileQuery.matches) {
+    return;
+  }
+
+  syncMobilePanelMetrics();
+  isDraggingPanel = true;
+  dragStartY = clientY;
+  dragStartOffset = mobilePanelOffset;
+  panel.classList.add("dragging");
+}
+
+function updateDraggingPanel(clientY: number) {
+  if (!isDraggingPanel) {
+    return;
+  }
+
+  const delta = clientY - dragStartY;
+  setMobilePanelOffset(dragStartOffset + delta);
+}
+
+function stopDraggingPanel() {
+  if (!(panel instanceof HTMLElement) || !isDraggingPanel) {
+    return;
+  }
+
+  isDraggingPanel = false;
+  snapMobilePanel();
+}
+
+function bindPanelDrag(element: Element | null) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  element.addEventListener("pointerdown", (event) => {
+    startDraggingPanel(event.clientY);
+    element.setPointerCapture(event.pointerId);
+  });
+
+  element.addEventListener("pointermove", (event) => {
+    updateDraggingPanel(event.clientY);
+  });
+
+  element.addEventListener("pointerup", () => {
+    stopDraggingPanel();
+  });
+
+  element.addEventListener("pointercancel", () => {
+    stopDraggingPanel();
+  });
+}
+
+bindPanelDrag(panelHandle);
+
+window.addEventListener("pointerup", stopDraggingPanel);
+window.addEventListener("resize", syncMobilePanelMetrics);
+mobileQuery.addEventListener("change", () => {
+  if (panel instanceof HTMLElement) {
+    panel.classList.remove("dragging");
+  }
+
+  mobilePanelOffset = 0;
+  syncMobilePanelMetrics();
+});
+
+function setSpecVal(id: string, value: string) {
   const el = getById(id);
   el.classList.remove("updating");
-  void el.offsetWidth; // reflow
+  void el.offsetWidth;
   el.classList.add("updating");
-  // Set value mid-animation (at the invisible frame)
+
   setTimeout(() => {
     el.textContent = value;
   }, 140);
+
   el.addEventListener("animationend", () => el.classList.remove("updating"), { once: true });
 }
 
-// Animate watermark text change
-function setWatermark(text: string): void {
+function setWatermark(text: string) {
   const el = getById("watermark");
   el.classList.remove("changing");
   void el.offsetWidth;
   el.classList.add("changing");
+
   setTimeout(() => {
     el.textContent = text;
   }, 160);
+
   el.addEventListener("animationend", () => el.classList.remove("changing"), { once: true });
 }
 
-// ─── Tab switching ───
 document.querySelectorAll<HTMLButtonElement>(".p-tab").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".p-tab").forEach((tab) => tab.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach((panel) => panel.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach((tabPanel) => tabPanel.classList.remove("active"));
+
     button.classList.add("active");
     getById(`tab-${button.dataset.tab}`).classList.add("active");
   });
 });
 
-// ─── Model selection ───
 document.querySelectorAll<HTMLElement>(".model-card").forEach((card) => {
   card.addEventListener("click", () => {
     document.querySelectorAll(".model-card").forEach((item) => item.classList.remove("active"));
     card.classList.add("active");
 
     const modelKey = card.dataset.model as ModelKey;
-    const specs = modelData[modelKey].specs;
-    const modelName = card.querySelector(".model-card-name")?.textContent ?? modelData[modelKey].name;
+    const model = modelData[modelKey];
+    const specs = model.specs;
+    const modelName =
+      card.querySelector(".model-card-name")?.textContent ?? modelData[modelKey].name;
 
     setWatermark(modelName);
+    canvasModelName.textContent = modelName;
+    canvasModelSub.textContent = card.querySelector(".model-card-sub")?.textContent ?? model.sub;
 
-    // Stagger spec flips for a cascade effect
-    const specIds: [string, string][] = [
+    const specIds: Array<[string, string]> = [
       ["sp-power", specs.power],
       ["sp-torque", specs.torque],
       ["sp-accel", specs.accel],
@@ -168,7 +282,6 @@ document.querySelectorAll<HTMLElement>(".model-card").forEach((card) => {
   });
 });
 
-// ─── Color swatches ───
 document.querySelectorAll<HTMLButtonElement>(".swatch").forEach((swatch) => {
   swatch.addEventListener("click", () => {
     document.querySelectorAll(".swatch").forEach((item) => item.classList.remove("active"));
@@ -177,12 +290,10 @@ document.querySelectorAll<HTMLButtonElement>(".swatch").forEach((swatch) => {
     const colorName = swatch.dataset.color ?? "";
     getById("colorName").textContent = colorName;
     getById("envGlow").style.background = envColors[colorName] || "";
-
     flashCanvas();
   });
 });
 
-// ─── Wheel pills ───
 document.querySelectorAll<HTMLElement>(".wheel-pill").forEach((pill) => {
   pill.addEventListener("click", () => {
     document.querySelectorAll(".wheel-pill").forEach((item) => item.classList.remove("active"));
@@ -191,10 +302,9 @@ document.querySelectorAll<HTMLElement>(".wheel-pill").forEach((pill) => {
   });
 });
 
-// ─── Interior items ───
 document.querySelectorAll<HTMLElement>(".int-item").forEach((item) => {
   item.addEventListener("click", () => {
-    document.querySelectorAll<HTMLElement>(".int-item").forEach((entry) => {
+    document.querySelectorAll(".int-item").forEach((entry) => {
       entry.classList.remove("active");
       entry.querySelector(".int-check")?.remove();
     });
@@ -205,12 +315,10 @@ document.querySelectorAll<HTMLElement>(".int-item").forEach((item) => {
     check.className = "ms fill int-check";
     check.textContent = "check_circle";
     item.appendChild(check);
-
     flashCanvas();
   });
 });
 
-// ─── View buttons ───
 document.querySelectorAll<HTMLButtonElement>(".view-btn").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".view-btn").forEach((item) => item.classList.remove("active"));
@@ -218,7 +326,6 @@ document.querySelectorAll<HTMLButtonElement>(".view-btn").forEach((button) => {
   });
 });
 
-// ─── Environment cards ───
 document.querySelectorAll<HTMLButtonElement>(".env-card").forEach((card) => {
   card.addEventListener("click", () => {
     document.querySelectorAll(".env-card").forEach((item) => item.classList.remove("active"));
@@ -226,18 +333,24 @@ document.querySelectorAll<HTMLButtonElement>(".env-card").forEach((card) => {
   });
 });
 
-// ─── Flash canvas ───
-function flashCanvas(): void {
+function flashCanvas() {
   const canvas = getById("carCanvas");
   canvas.classList.remove("flash");
   void canvas.offsetWidth;
   canvas.classList.add("flash");
 }
 
-// ─── Init ───
 const initialSwatch = document.querySelector<HTMLButtonElement>(".swatch.active");
 if (initialSwatch?.dataset.color) {
   const initialColor = initialSwatch.dataset.color;
   getById("colorName").textContent = initialColor;
   getById("envGlow").style.background = envColors[initialColor] || "";
 }
+
+const initialModelCard = document.querySelector<HTMLElement>(".model-card.active");
+if (initialModelCard) {
+  canvasModelName.textContent = initialModelCard.querySelector(".model-card-name")?.textContent ?? "Crown";
+  canvasModelSub.textContent = initialModelCard.querySelector(".model-card-sub")?.textContent ?? "Platinum - Hybrid MAX AWD";
+}
+
+syncMobilePanelMetrics();
