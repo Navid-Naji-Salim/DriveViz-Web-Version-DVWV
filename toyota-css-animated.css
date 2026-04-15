@@ -1185,6 +1185,9 @@ button {
     justify-content: center;
     flex: 0 0 auto;
     padding: 0.85rem 1rem 0.45rem;
+    background:
+      linear-gradient(180deg, rgba(33, 35, 37, 0.98), rgba(18, 19, 20, 0.98)),
+      var(--bg2);
     touch-action: none;
     cursor: ns-resize;
     user-select: none;
@@ -1347,21 +1350,10 @@ button {
   }
 
   .watermark {
-    top: 50%;
-    bottom: auto;
+    bottom: 27%;
     left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .watermark.changing {
-    animation: watermarkChangeCentered 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  @keyframes watermarkChangeCentered {
-    0%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    40% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-    41% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
-    100%{ opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    transform: translateX(-50%);
+    font-size: 15vw;
   }
 
   .view-controls {
@@ -1423,10 +1415,10 @@ button {
   }
 
   .watermark {
-    top: 50%;
-    bottom: auto;
+    bottom: 31%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
+    font-size: 19vw;
   }
 
   .ground {
