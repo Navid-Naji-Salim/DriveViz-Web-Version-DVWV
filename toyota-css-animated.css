@@ -1126,3 +1126,276 @@ button {
 .flash {
   animation: flash 0.4s ease;
 }
+
+@media (max-width: 900px) {
+  html,
+  body {
+    overflow: hidden;
+  }
+
+  .layout {
+    position: relative;
+    flex-direction: column;
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  .canvas-wrap {
+    order: 1;
+    min-height: 54dvh;
+  }
+
+  .panel {
+    order: 2;
+    width: 100%;
+    height: 46dvh;
+    min-height: 320px;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.4rem 1.4rem 0 0;
+    background:
+      linear-gradient(180deg, rgba(33, 35, 37, 0.98), rgba(18, 19, 20, 0.98)),
+      var(--bg2);
+    box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.45);
+    animation: panelRiseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .panel::before {
+    content: "";
+    position: absolute;
+    top: 0.65rem;
+    left: 50%;
+    width: 3.25rem;
+    height: 0.28rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateX(-50%);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+  }
+
+  @keyframes panelRiseIn {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .panel-brand {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 1.35rem 1rem 0.9rem;
+    text-align: left;
+  }
+
+  .brand-logo-wrap {
+    margin-bottom: 0;
+  }
+
+  .panel-brand-logo {
+    width: 56px;
+  }
+
+  .brand-text-block {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .brand-name-toyota {
+    font-size: 0.92rem;
+    letter-spacing: 0.22em;
+  }
+
+  .brand-name-iraq {
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+  }
+
+  .panel-tabs {
+    gap: 0.45rem;
+    padding: 0 1rem 0.85rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .panel-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .p-tab {
+    flex: 0 0 auto;
+    min-width: max-content;
+    padding: 0.7rem 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .p-tab::before,
+  .p-tab::after {
+    display: none;
+  }
+
+  .p-tab.active {
+    border-color: rgba(235, 10, 30, 0.5);
+    background: rgba(189, 0, 20, 0.14);
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(235, 10, 30, 0.18) inset;
+  }
+
+  .p-tab-label {
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
+  }
+
+  .panel-body {
+    padding: 0 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .model-cards,
+  .wheel-row,
+  .int-row,
+  .env-list {
+    gap: 0.7rem;
+  }
+
+  .model-card,
+  .wheel-pill,
+  .int-item,
+  .env-card,
+  .env-note,
+  .spec-box {
+    border-radius: 0.9rem;
+  }
+
+  .model-card,
+  .wheel-pill,
+  .int-item {
+    padding: 0.95rem 1rem;
+  }
+
+  .model-card-name,
+  .env-card-name {
+    font-size: 0.92rem;
+  }
+
+  .model-card-sub,
+  .wheel-pill-sub,
+  .int-sub,
+  .color-name,
+  .env-card-sub,
+  .env-note {
+    font-size: 0.72rem;
+  }
+
+  .wheel-pill-name,
+  .int-name {
+    font-size: 0.78rem;
+  }
+
+  .sec-label,
+  .spec-lbl,
+  .env-card-kicker,
+  .model-badge {
+    font-size: 0.58rem;
+  }
+
+  .swatch {
+    width: 2.3rem;
+    height: 2.3rem;
+  }
+
+  .spec-row {
+    gap: 0.7rem;
+  }
+
+  .spec-box {
+    padding: 0.9rem;
+  }
+
+  .spec-val {
+    font-size: 1rem;
+  }
+
+  .watermark {
+    bottom: calc(46dvh + 1.2rem);
+    font-size: 18vw;
+  }
+
+  .view-controls {
+    bottom: calc(46dvh + 1.25rem);
+    padding: 0.35rem;
+    gap: 0.25rem;
+  }
+
+  .view-btn {
+    width: 2.7rem;
+    height: 2.7rem;
+  }
+
+  .canvas-placeholder .ms {
+    font-size: 4rem;
+  }
+
+  .canvas-ph-title {
+    font-size: 0.82rem;
+  }
+
+  .canvas-ph-sub {
+    max-width: 240px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .panel {
+    height: 50dvh;
+    min-height: 360px;
+  }
+
+  .canvas-wrap {
+    min-height: 50dvh;
+  }
+
+  .panel-brand {
+    justify-content: flex-start;
+    padding-inline: 1rem;
+  }
+
+  .spec-row {
+    grid-template-columns: 1fr;
+  }
+
+  .view-controls {
+    bottom: calc(50dvh + 0.9rem);
+    left: 50%;
+    max-width: calc(100vw - 1.5rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .view-controls::-webkit-scrollbar {
+    display: none;
+  }
+
+  .watermark {
+    bottom: calc(50dvh + 1rem);
+    font-size: 22vw;
+  }
+
+  .ground {
+    height: 42%;
+  }
+
+  .ground-line {
+    right: 7%;
+    left: 7%;
+    bottom: 40%;
+  }
+}
