@@ -1347,7 +1347,21 @@ button {
   }
 
   .watermark {
-    bottom: max(calc(var(--mobile-panel-visible) + 8%), 12%);
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .watermark.changing {
+    animation: watermarkChangeCentered 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes watermarkChangeCentered {
+    0%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    40% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    41% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+    100%{ opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
   }
 
   .view-controls {
@@ -1409,7 +1423,10 @@ button {
   }
 
   .watermark {
-    bottom: max(calc(var(--mobile-panel-visible) + 6%), 11%);
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .ground {

@@ -84,8 +84,6 @@ const rootStyle = document.documentElement.style;
 const mobileQuery = window.matchMedia("(max-width: 900px)");
 const panel = document.querySelector(".panel");
 const panelHandle = document.querySelector(".panel-handle");
-const canvasModelName = getById("canvasModelName");
-const canvasModelSub = getById("canvasModelSub");
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 let mobilePanelHeight = 0;
 let mobilePanelOffset = 0;
@@ -203,12 +201,9 @@ document.querySelectorAll(".model-card").forEach((card) => {
         document.querySelectorAll(".model-card").forEach((item) => item.classList.remove("active"));
         card.classList.add("active");
         const modelKey = card.dataset.model;
-        const model = modelData[modelKey];
-        const specs = model.specs;
+        const specs = modelData[modelKey].specs;
         const modelName = (_b = (_a = card.querySelector(".model-card-name")) === null || _a === void 0 ? void 0 : _a.textContent) !== null && _b !== void 0 ? _b : modelData[modelKey].name;
         setWatermark(modelName);
-        canvasModelName.textContent = modelName;
-        canvasModelSub.textContent = card.querySelector(".model-card-sub")?.textContent ?? model.sub;
         const specIds = [
             ["sp-power", specs.power],
             ["sp-torque", specs.torque],
@@ -283,10 +278,5 @@ if (initialSwatch === null || initialSwatch === void 0 ? void 0 : initialSwatch.
     const initialColor = initialSwatch.dataset.color;
     getById("colorName").textContent = initialColor;
     getById("envGlow").style.background = envColors[initialColor] || "";
-}
-const initialModelCard = document.querySelector(".model-card.active");
-if (initialModelCard instanceof HTMLElement) {
-    canvasModelName.textContent = initialModelCard.querySelector(".model-card-name")?.textContent ?? "Crown";
-    canvasModelSub.textContent = initialModelCard.querySelector(".model-card-sub")?.textContent ?? "Platinum - Hybrid MAX AWD";
 }
 syncMobilePanelMetrics();
