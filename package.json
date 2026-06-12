@@ -1,0 +1,22 @@
+{
+  "name": "driveviz-toyota-iraq",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run stop:dev && concurrently -k -n backend,frontend -c red,cyan \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev:app": "concurrently -k -n backend,frontend -c red,cyan \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "stop:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-dev.ps1",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "typecheck": "npm run typecheck --prefix backend && npm run typecheck --prefix frontend",
+    "db:dev": "npm run db:dev --prefix backend",
+    "db:setup": "npm run db:setup --prefix backend",
+    "db:status": "npm run db:status --prefix backend",
+    "prisma:generate": "npm run prisma:generate --prefix backend",
+    "prisma:push": "npm run prisma:push --prefix backend",
+    "prisma:seed": "npm run prisma:seed --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

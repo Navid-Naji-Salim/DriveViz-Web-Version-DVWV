@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CarModel {
+  id          String       @id
+  name        String
+  trim        String
+  description String
+  available   Boolean      @default(true)
+  badge       String?
+  sortOrder   Int
+  specs       Json
+  layers      LayerAsset[]
+  colors      ColorOption[]
+  wheels      WheelOption[]
+  configs     VisualizationConfig[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LayerAsset {
+  id       String   @id @default(cuid())
+  modelId  String
+  model    CarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  role     String
+  url      String
+  visible  Boolean  @default(true)
+  order    Int
+}
+
+model ColorOption {
+  id        String   @id
+  modelId   String
+  model     CarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  name      String
+  hex       String
+  sortOrder Int
+}
+
+model WheelOption {
+  id        String   @id
+  modelId   String
+  model     CarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  name      String
+  finish    String
+  colorHex  String
+  roughness Float
+  metalness Float
+  sortOrder Int
+}
+
+model VisualizationConfig {
+  id        String   @id @default(cuid())
+  modelId   String
+  model     CarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  colorId   String
+  wheelId   String
+  daylight  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@driveviz/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "prisma generate && tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "postinstall": "prisma generate",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:dev": "prisma dev -n driveviz-toyota --detach -p 51222 -P 51226 --shadow-db-port 51227",
+    "db:setup": "tsx scripts/setupDb.ts",
+    "db:status": "prisma dev ls",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "tsx scripts/pushSchema.ts",
+    "prisma:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "prisma": "^6.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}
