@@ -118,8 +118,13 @@ function frameObject(object: THREE.Object3D) {
   const scale = maxAxis > 0 ? 3.35 / maxAxis : 1;
 
   object.scale.setScalar(scale);
-  object.position.sub(center.multiplyScalar(scale));
-  object.position.y += 0.12;
+  object.updateMatrixWorld(true);
+
+  const fittedBox = new THREE.Box3().setFromObject(object);
+  const bottomY = fittedBox.min.y;
+  const floorTopY = -0.02;
+
+  object.position.y += floorTopY - bottomY + 0.01;
   object.updateMatrixWorld(true);
 }
 
