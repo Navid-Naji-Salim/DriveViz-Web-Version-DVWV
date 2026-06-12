@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const container = ref<HTMLElement | null>(null);
 const loading = ref(false);
+const wheelLoading = ref(false);
 const loadError = ref("");
 
 let renderer: THREE.WebGLRenderer | null = null;
@@ -22,13 +23,52 @@ let camera: THREE.PerspectiveCamera | null = null;
 let controls: OrbitControls | null = null;
 let animationFrame = 0;
 let resizeObserver: ResizeObserver | null = null;
-let bodyGroup: THREE.Group | null = null;
-let wheelGroup: THREE.Group | null = null;
+let carRoot: THREE.Group | null = null;
+let bodyGroup: THREE.Object3D | null = null;
+let wheelGroup: THREE.Object3D | null = null;
+let carLoadToken = 0;
+let wheelLoadToken = 0;
+let carBaseY = 0;
 const loader = new GLTFLoader();
 const clock = new THREE.Clock();
+const loadingTitle = computed(() => {
+  if (loadError.value) {
+    return "Model Error";
+  }
+
+  if (loading.value) {
+    return "Loading Model";
+  }
+
+  if (wheelLoading.value) {
+    return "Loading Wheels";
+  }
+
+  return "Car Canvas";
+});
+
+const loadingMessage = computed(() => {
+  if (loadError.value) {
+    return loadError.value;
+  }
+
+  if (wheelLoading.value) {
+    return "Applying the selected wheel package.";
+  }
+
+  return "Select the installed Toyota model to load the 3D layers.";
+});
+
+const fallbackWheelAssets: Record<string, string> = {
+  "split-spoke-alloy": "/models/Wheels_1.glb",
+  "matte-black-sport": "/models/Wheels_2.glb",
+  "forged-black": "/models/Wheels_2.glb",
+  "dark-chrome": "/models/Wheels_3.glb",
+  "premium-machined": "/models/Wheels_4.glb"
+};
 
 function makeRenderer(host: HTMLElement) {
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -39,7 +79,7 @@ function makeRenderer(host: HTMLElement) {
 
 function makeScene(host: HTMLElement) {
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(35, host.clientWidth / host.clientHeight, 0.1, 100);
+  camera = new THREE.PerspectiveCamera(35, host.clientWidth / host.clientHeight, 0.01, 500);
   camera.position.set(4.2, 2.2, 5.6);
 
   controls = new OrbitControls(camera, renderer!.domElement);
@@ -70,6 +110,7 @@ function makeScene(host: HTMLElement) {
 }
 
 function frameObject(object: THREE.Object3D) {
+  object.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(object);
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
@@ -79,6 +120,7 @@ function frameObject(object: THREE.Object3D) {
   object.scale.setScalar(scale);
   object.position.sub(center.multiplyScalar(scale));
   object.position.y += 0.12;
+  object.updateMatrixWorld(true);
 }
 
 function stylizeLayer(object: THREE.Object3D, role: string) {
@@ -89,6 +131,19 @@ function stylizeLayer(object: THREE.Object3D, role: string) {
 
     child.castShadow = true;
     child.receiveShadow = true;
+    child.frustumCulled = false;
+
+    if (Array.isArray(child.material)) {
+      child.material = child.material.map((material) => {
+        const clone = material.clone();
+        clone.side = THREE.DoubleSide;
+        return clone;
+      });
+    } else {
+      const clone = child.material.clone();
+      clone.side = THREE.DoubleSide;
+      child.material = clone;
+    }
 
     if (role === "body") {
       child.material = new THREE.MeshPhysicalMaterial({
@@ -96,10 +151,36 @@ function stylizeLayer(object: THREE.Object3D, role: string) {
         metalness: 0.72,
         roughness: 0.26,
         clearcoat: 1,
-        clearcoatRoughness: 0.18
+        clearcoatRoughness: 0.18,
+        side: THREE.DoubleSide
       });
     }
   });
+}
+
+function disposeObject(object: THREE.Object3D) {
+  object.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) {
+      return;
+    }
+
+    child.geometry.dispose();
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    materials.forEach((material) => material.dispose());
+  });
+}
+
+function removeCar() {
+  if (!scene || !carRoot) {
+    return;
+  }
+
+  scene.remove(carRoot);
+  disposeObject(carRoot);
+  carRoot = null;
+  bodyGroup = null;
+  wheelGroup = null;
+  carBaseY = 0;
 }
 
 function setBodyColor(color: ColorOption | null) {
@@ -133,6 +214,52 @@ function setWheelFinish(wheel: WheelOption | null) {
   });
 }
 
+function resolveWheelAsset(model: CarModel | null, wheel: WheelOption | null) {
+  return (
+    wheel?.assetUrl ??
+    (wheel?.id ? fallbackWheelAssets[wheel.id] : undefined) ??
+    model?.layers.find((layer) => layer.role === "wheels")?.url ??
+    "/models/Wheels_1.glb"
+  );
+}
+
+async function loadWheelLayer(model: CarModel, wheel: WheelOption | null, token: number) {
+  if (!carRoot) {
+    return;
+  }
+
+  const url = resolveWheelAsset(model, wheel);
+  wheelLoading.value = true;
+
+  try {
+    const gltf = await loader.loadAsync(url);
+
+    if (token !== wheelLoadToken || !carRoot) {
+      disposeObject(gltf.scene);
+      return;
+    }
+
+    if (wheelGroup) {
+      carRoot.remove(wheelGroup);
+      disposeObject(wheelGroup);
+    }
+
+    wheelGroup = gltf.scene;
+    wheelGroup.name = "wheel-layer";
+    stylizeLayer(wheelGroup, "wheels");
+    carRoot.add(wheelGroup);
+    carRoot.updateMatrixWorld(true);
+    setWheelFinish(wheel);
+  } catch (error) {
+    console.error(error);
+    loadError.value = "Unable to load the selected wheel package.";
+  } finally {
+    if (token === wheelLoadToken) {
+      wheelLoading.value = false;
+    }
+  }
+}
+
 function setDaylight(daylight: boolean) {
   if (!scene) {
     return;
@@ -155,26 +282,26 @@ async function loadCar(nextModel: CarModel | null) {
     return;
   }
 
+  const token = ++carLoadToken;
   loading.value = true;
   loadError.value = "";
-
-  scene.children
-    .filter((child) => child.name === "car-layer")
-    .forEach((child) => scene?.remove(child));
-
-  bodyGroup = null;
-  wheelGroup = null;
+  removeCar();
 
   try {
-    const carRoot = new THREE.Group();
-    carRoot.name = "car-layer";
+    const nextRoot = new THREE.Group();
+    nextRoot.name = "car-layer";
 
     for (const layer of nextModel.layers) {
-      if (!layer.visible) {
+      if (!layer.visible || layer.role === "wheels") {
         continue;
       }
 
       const gltf = await loader.loadAsync(layer.url);
+      if (token !== carLoadToken) {
+        disposeObject(gltf.scene);
+        return;
+      }
+
       const object = gltf.scene;
       stylizeLayer(object, layer.role);
 
@@ -182,14 +309,18 @@ async function loadCar(nextModel: CarModel | null) {
         bodyGroup = object;
       }
 
-      if (layer.role === "wheels") {
-        wheelGroup = object;
-      }
+      nextRoot.add(object);
+    }
 
-      carRoot.add(object);
+    carRoot = nextRoot;
+    await loadWheelLayer(nextModel, props.wheel, ++wheelLoadToken);
+
+    if (token !== carLoadToken || !carRoot) {
+      return;
     }
 
     frameObject(carRoot);
+    carBaseY = carRoot.position.y;
     scene.add(carRoot);
     setBodyColor(props.color);
     setWheelFinish(props.wheel);
@@ -206,9 +337,8 @@ function animate() {
   controls?.update();
 
   const elapsed = clock.getElapsedTime();
-  const car = scene?.getObjectByName("car-layer");
-  if (car) {
-    car.position.y = 0.02 + Math.sin(elapsed * 0.7) * 0.012;
+  if (carRoot) {
+    carRoot.position.y = carBaseY + Math.sin(elapsed * 0.7) * 0.006;
   }
 
   if (renderer && scene && camera) {
@@ -242,13 +372,23 @@ onMounted(() => {
 
 watch(() => props.model?.id, () => void loadCar(props.model));
 watch(() => props.color?.id, () => setBodyColor(props.color));
-watch(() => props.wheel?.id, () => setWheelFinish(props.wheel));
+watch(
+  () => props.wheel?.id,
+  () => {
+    if (!props.model?.available || !carRoot) {
+      return;
+    }
+
+    void loadWheelLayer(props.model, props.wheel, ++wheelLoadToken);
+  }
+);
 watch(() => props.daylight, setDaylight);
 
 onBeforeUnmount(() => {
   window.cancelAnimationFrame(animationFrame);
   resizeObserver?.disconnect();
   controls?.dispose();
+  removeCar();
   renderer?.dispose();
   renderer?.domElement.remove();
 });
@@ -256,11 +396,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="container" class="car-viewer">
-    <div v-if="loading || loadError || !model" class="canvas-placeholder">
+    <div v-if="loading || wheelLoading || loadError || !model" class="canvas-placeholder">
       <span class="ms">directions_car</span>
-      <p class="canvas-ph-title">{{ loadError ? "Model Error" : loading ? "Loading Model" : "Car Canvas" }}</p>
+      <p class="canvas-ph-title">{{ loadingTitle }}</p>
       <p class="canvas-ph-sub">
-        {{ loadError || "Select the installed Toyota model to load the 3D layers." }}
+        {{ loadingMessage }}
       </p>
     </div>
   </div>

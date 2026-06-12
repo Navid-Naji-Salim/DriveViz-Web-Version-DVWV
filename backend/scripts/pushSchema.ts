@@ -43,6 +43,7 @@ const statements = [
       "modelId" text not null references "CarModel"("id") on delete cascade on update cascade,
       "name" text not null,
       "finish" text not null,
+      "assetUrl" text not null default '/models/Wheels_1.glb',
       "colorHex" text not null,
       "roughness" double precision not null,
       "metalness" double precision not null,
@@ -64,6 +65,10 @@ const statements = [
 for (const statement of statements) {
   await prisma.$executeRawUnsafe(statement);
 }
+
+await prisma.$executeRawUnsafe(
+  'alter table "WheelOption" add column if not exists "assetUrl" text not null default \'/models/Wheels_1.glb\''
+);
 
 await prisma.$disconnect();
 

@@ -30,6 +30,7 @@ export type WheelOption = {
   id: string;
   name: string;
   finish: string;
+  assetUrl?: string;
   colorHex: string;
   roughness: number;
   metalness: number;

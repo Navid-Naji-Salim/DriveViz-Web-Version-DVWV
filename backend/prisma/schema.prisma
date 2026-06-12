@@ -50,6 +50,7 @@ model WheelOption {
   model     CarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
   name      String
   finish    String
+  assetUrl  String
   colorHex  String
   roughness Float
   metalness Float

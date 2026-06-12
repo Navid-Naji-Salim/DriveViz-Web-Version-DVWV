@@ -130,7 +130,10 @@ const specGroups = computed(() => {
             type="button"
             @click="emit('selectWheel', wheel)"
           >
-            <div class="wheel-dot" />
+            <div class="wheel-preview">
+              <div class="wheel-dot" />
+              <span>{{ wheel.sortOrder }}</span>
+            </div>
             <div>
               <div class="wheel-pill-name">{{ wheel.name }}</div>
               <div class="wheel-pill-sub">{{ wheel.finish }}</div>

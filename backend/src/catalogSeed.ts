@@ -48,28 +48,41 @@ export const catalogSeed: CatalogModelSeed[] = [
           id: "split-spoke-alloy",
           name: "21-in. Split-Spoke Alloy",
           finish: "Machined finish - Included",
+          assetUrl: "/models/Wheels_1.glb",
           colorHex: "#9ca3af",
           roughness: 0.28,
           metalness: 0.82,
           sortOrder: 1
         },
         {
-          id: "matte-black-sport",
-          name: "21-in. Matte Black Sport",
-          finish: "Dark finish option",
-          colorHex: "#111111",
-          roughness: 0.72,
-          metalness: 0.46,
+          id: "forged-black",
+          name: "21-in. Forged Black",
+          finish: "Gloss black multi-spoke",
+          assetUrl: "/models/Wheels_2.glb",
+          colorHex: "#0d0d0d",
+          roughness: 0.48,
+          metalness: 0.66,
           sortOrder: 2
         },
         {
           id: "dark-chrome",
-          name: "20-in. Five-Spoke Dark Chrome",
-          finish: "Sport package design",
+          name: "20-in. Dark Chrome",
+          finish: "Layered sport design",
+          assetUrl: "/models/Wheels_3.glb",
           colorHex: "#4b5563",
-          roughness: 0.2,
-          metalness: 0.9,
+          roughness: 0.24,
+          metalness: 0.86,
           sortOrder: 3
+        },
+        {
+          id: "premium-machined",
+          name: "22-in. Premium Machined",
+          finish: "Bright machined face",
+          assetUrl: "/models/Wheels_4.glb",
+          colorHex: "#c8c8c8",
+          roughness: 0.18,
+          metalness: 0.92,
+          sortOrder: 4
         }
       ]
     }

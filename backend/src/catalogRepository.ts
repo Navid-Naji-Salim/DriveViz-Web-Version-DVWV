@@ -91,6 +91,7 @@ export async function getCatalogModels(): Promise<CatalogModel[]> {
         modelId: model.id,
         name: String(wheel.name),
         finish: String(wheel.finish),
+        assetUrl: String(wheel.assetUrl ?? "/models/Wheels_1.glb"),
         colorHex: String(wheel.colorHex),
         roughness: Number(wheel.roughness),
         metalness: Number(wheel.metalness),
